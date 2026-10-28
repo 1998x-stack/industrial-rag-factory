@@ -1,0 +1,74 @@
+"""Flask read-only research API. Authentication and production exposure are NOT in Stage 01."""
+from __future__ import annotations
+from pathlib import PurePosixPath
+
+from .config import Settings
+from .parsing import from_bytes
+from .pipeline import Pipeline
+
+
+def create_app(settings: Settings | None = None, pipeline: Pipeline | None = None):
+    try:
+        from flask import Flask, jsonify, request
+    except ImportError as exc:
+        raise RuntimeError("Install industrial-rag-factory[api]") from exc
+    settings = settings or Settings.from_env()
+    if settings.environment.lower() == "production":
+        raise RuntimeError("Stage 01 Flask API is development-only; production requires authenticated gateway")
+    app = Flask(__name__)
+    app.config["MAX_CONTENT_LENGTH"] = 1_048_576
+    service = pipeline or Pipeline(settings)
+
+    @app.get("/healthz")
+    def health():
+        return jsonify({"status": "ok", "stage": "01", "mode": "development"})
+
+    @app.post("/v1/documents")
+    def documents():
+        body = request.get_json(silent=True)
+        if not isinstance(body,dict):
+            return jsonify({"error":"JSON object required"}),400
+        # Client cannot impersonate tenants or access groups in this development API.
+        if any(k in body for k in ("tenant_id","access_groups","groups","principal")):
+            return jsonify({"error":"tenant/group fields are server-controlled"}),400
+        try:
+            source = str(body["source_uri"])
+            content = body["content"]
+            if not isinstance(content,str):
+                raise ValueError("content must be a UTF-8 string")
+            suffix = PurePosixPath(source).suffix or ".md"
+            if suffix not in (".md",".markdown",".txt"):
+                raise ValueError("HTTP JSON ingest supports only text formats; use CLI for PDF/DOCX")
+            doc = from_bytes(content.encode("utf-8"),source,suffix,
+                             revision=str(body.get("revision","1")),
+                             tenant_id=settings.tenant_id,access_groups=settings.groups)
+            return jsonify(service.ingest(doc)),201
+        except (KeyError,ValueError,UnicodeError) as exc:
+            return jsonify({"error":str(exc)}),400
+
+    @app.post("/v1/query")
+    def query():
+        body = request.get_json(silent=True)
+        if not isinstance(body,dict):
+            return jsonify({"error":"JSON object required"}),400
+        if any(k in body for k in ("tenant_id","access_groups","groups","principal")):
+            return jsonify({"error":"tenant/group fields are server-controlled"}),400
+        try:
+            question = body["question"]
+            if not isinstance(question,str) or len(question)>2000:
+                raise ValueError("question must be a string of at most 2000 chars")
+            result = service.query(question,tenant=settings.tenant_id,groups=settings.groups,
+                                   mode=body.get("mode","hybrid"),top_k=body.get("top_k",5))
+            return jsonify(result.to_dict()),200
+        except (ValueError,KeyError,TypeError) as exc:
+            return jsonify({"error":str(exc)}),400
+
+    return app
+
+
+def main() -> None:
+    settings = Settings.from_env()
+    if settings.host not in ("127.0.0.1","localhost","::1"):
+        raise RuntimeError("Stage 01 development API must bind to loopback")
+    app = create_app(settings)
+    app.run(host=settings.host,port=settings.port,debug=False)
