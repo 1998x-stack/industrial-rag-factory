@@ -5,7 +5,7 @@
 
 ex:AssetShape a sh:NodeShape ; sh:targetClass ex:EquipmentAsset ;
   sh:property [ sh:path ex:assetId ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
-  sh:property [ sh:path ex:hasRole ; sh:minCount 1 ; sh:class iof:EquipmentRole ] ;
+  sh:property [ sh:path iof:hasRole ; sh:minCount 1 ; sh:class iof:EquipmentRole ] ;
   sh:property [ sh:path ex:tenantId ; sh:minCount 1 ; sh:maxCount 1 ] ;
   sh:property [ sh:path ex:sourceUri ; sh:minCount 1 ] .
 

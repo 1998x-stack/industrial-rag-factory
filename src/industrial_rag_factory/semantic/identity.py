@@ -63,6 +63,8 @@ class EntityResolver:
                 system: str | None = None, at_time: str | None = None) -> Resolution:
         if not tenant_id or not groups or not external_id.strip():
             raise ValueError("tenant, access groups, and identifier are required")
+        if system is not None and not isinstance(system,str):
+            raise ValueError("system must be a string")
         if at_time is not None:
             instant(at_time)
         candidates = [

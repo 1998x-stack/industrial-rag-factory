@@ -32,7 +32,7 @@ def validate_knowledge_graph(
     data = kg.scoped(tenant_id=tenant_id,groups=groups,at_time=at_time)
     conforms, _, report = validate(
         data, shacl_graph=shapes, ont_graph=kg.ontology,
-        inference="rdfs", abort_on_first=False, allow_infos=False,
+        inference="none", abort_on_first=False, allow_infos=False,
         allow_warnings=False, advanced=False,
     )
     return ValidationResult(bool(conforms),str(report),len(data))

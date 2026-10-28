@@ -48,6 +48,7 @@ class KnowledgeGraph:
             if not item.get("tenant_id") or not item.get("access_groups"):
                 raise ValueError("Tenant and access groups required")
             node(item["id"])
+            valid_interval(item.get("valid_from"),item.get("valid_to"),None)
         for r in self.relations:
             if r["predicate"] not in ALLOWED_PREDICATES:
                 raise ValueError(f"Unknown predicate: {r['predicate']}")
@@ -63,10 +64,12 @@ class KnowledgeGraph:
     def from_json(cls, path: str | Path, ontology_path: str | Path) -> "KnowledgeGraph":
         return cls(json.loads(Path(path).read_text(encoding="utf-8")), ontology_path)
 
-    def visible(self, canonical_id: str, *, tenant_id: str, groups: tuple[str, ...]) -> bool:
+    def visible(self, canonical_id: str, *, tenant_id: str, groups: tuple[str, ...],
+                at_time: str | None = None) -> bool:
         item = self.entities.get(canonical_id)
         return bool(item and item["tenant_id"] == tenant_id
-                    and set(groups).intersection(item["access_groups"]))
+                    and set(groups).intersection(item["access_groups"])
+                    and valid_interval(item.get("valid_from"),item.get("valid_to"),at_time))
 
     def scoped(self, *, tenant_id: str, groups: tuple[str, ...],
                at_time: str | None = None) -> Graph:
@@ -81,7 +84,7 @@ class KnowledgeGraph:
         g.bind("iof", IOF)
         g.bind("prov", PROV)
         visible = {id_: item for id_, item in self.entities.items()
-                   if self.visible(id_,tenant_id=tenant_id,groups=groups)}
+                   if self.visible(id_,tenant_id=tenant_id,groups=groups,at_time=at_time)}
         for item in visible.values():
             s = node(item["id"])
             kind = IOF.EquipmentRole if item["kind"] == "EquipmentRole" else ONTO[item["kind"]]
@@ -101,7 +104,7 @@ class KnowledgeGraph:
                 continue
             if not valid_interval(rel.get("valid_from"),rel.get("valid_to"),at_time):
                 continue
-            s, p, o = node(rel["from"]), ONTO[rel["predicate"]], node(rel["to"])
+            s, p, o = node(rel["from"]), (IOF.hasRole if rel["predicate"] == "hasRole" else ONTO[rel["predicate"]]), node(rel["to"])
             g.add((s,p,o))
             # Reified statement retains source provenance and effective interval.
             stmt = node("assertion-" + rel["id"])
@@ -122,14 +125,14 @@ class KnowledgeGraph:
                   at_time: str | None) -> list[str]:
         if predicate not in ALLOWED_PREDICATES or direction not in ("in","out"):
             raise ValueError("Invalid graph traversal operator")
-        if not self.visible(canonical_id,tenant_id=tenant_id,groups=groups):
+        if not self.visible(canonical_id,tenant_id=tenant_id,groups=groups,at_time=at_time):
             return []
         found = set()
         for r in self.relations:
             endpoint = r["from"] if direction == "out" else r["to"]
             target = r["to"] if direction == "out" else r["from"]
             if endpoint == canonical_id and r["predicate"] == predicate:
-                if self.visible(target,tenant_id=tenant_id,groups=groups) and valid_interval(
+                if self.visible(target,tenant_id=tenant_id,groups=groups,at_time=at_time) and valid_interval(
                     r.get("valid_from"),r.get("valid_to"),at_time
                 ):
                     found.add(target)
@@ -141,7 +144,7 @@ class KnowledgeGraph:
             raise ValueError("Maximum five graph hops allowed")
         if at_time is not None:
             instant(at_time)
-        current = {start} if self.visible(start,tenant_id=tenant_id,groups=groups) else set()
+        current = {start} if self.visible(start,tenant_id=tenant_id,groups=groups,at_time=at_time) else set()
         for step in steps:
             next_ids: set[str] = set()
             for identifier in current:
@@ -154,8 +157,8 @@ class KnowledgeGraph:
                              tenant_id: str, groups: tuple[str, ...],
                              at_time: str | None = None) -> list[str]:
         """Return only provenance for authorized, time-valid matching relations."""
-        if not (self.visible(subject,tenant_id=tenant_id,groups=groups)
-                and self.visible(object_id,tenant_id=tenant_id,groups=groups)):
+        if not (self.visible(subject,tenant_id=tenant_id,groups=groups,at_time=at_time)
+                and self.visible(object_id,tenant_id=tenant_id,groups=groups,at_time=at_time)):
             return []
         return sorted({
             r["source_record_id"] for r in self.relations

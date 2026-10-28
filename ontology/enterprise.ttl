@@ -19,7 +19,7 @@ ex:Specification a owl:Class ; rdfs:label "Applicable specification record" .
 ex:PlantArea a owl:Class ; rdfs:label "Plant area" .
 ex:MaterialComponent a owl:Class ; rdfs:label "Material component" .
 
-ex:hasRole a owl:ObjectProperty ; rdfs:range iof:EquipmentRole .
+# The shared IOF predicate iof:hasRole is used directly in instance data.
 ex:hasMeasurementPoint a owl:ObjectProperty ; rdfs:domain ex:EquipmentAsset ; rdfs:range ex:MeasurementPoint .
 ex:measuresAsset a owl:ObjectProperty ; rdfs:domain ex:MeasurementPoint ; rdfs:range ex:EquipmentAsset .
 ex:forBatch a owl:ObjectProperty ; rdfs:domain ex:Execution ; rdfs:range ex:ProductionBatch .
