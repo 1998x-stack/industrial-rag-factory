@@ -27,11 +27,40 @@ def main() -> None:
     evaluate.add_argument("--mode",choices=("sparse","dense","hybrid"),default="hybrid")
     evaluate.add_argument("--k",type=int,default=5)
     sub.add_parser("serve")
+    semantic_resolve = sub.add_parser("semantic-resolve")
+    semantic_resolve.add_argument("external_id")
+    semantic_resolve.add_argument("--system", default=None)
+    semantic_resolve.add_argument("--at-time", default=None)
+    semantic_validate = sub.add_parser("semantic-validate")
+    semantic_validate.add_argument("--at-time", default="2026-10-20T10:00:00+08:00")
+    semantic_eval = sub.add_parser("semantic-evaluate")
+    semantic_eval.add_argument("--questions",default="datasets/stage02/competency.jsonl")
+    semantic_export = sub.add_parser("semantic-export")
+    semantic_export.add_argument("output")
+    semantic_export.add_argument("--at-time",default="2026-10-20T10:00:00+08:00")
     args = parser.parse_args()
     settings = Settings.from_env()
     if args.command == "serve":
         from .api import main as serve
         serve()
+        return
+    if args.command.startswith("semantic-"):
+        from .semantic.service import SemanticService
+        service = SemanticService.from_defaults()
+        if args.command == "semantic-resolve":
+            payload = service.resolve(args.external_id,tenant_id=settings.tenant_id,
+                                      groups=settings.groups,system=args.system,
+                                      at_time=args.at_time)
+        elif args.command == "semantic-validate":
+            payload = service.validate(tenant_id=settings.tenant_id,
+                                       groups=settings.groups,at_time=args.at_time)
+        elif args.command == "semantic-evaluate":
+            payload = service.evaluate(args.questions,tenant_id=settings.tenant_id,
+                                       groups=settings.groups)
+        else:
+            payload = service.export(args.output,tenant_id=settings.tenant_id,
+                                     groups=settings.groups,at_time=args.at_time)
+        print(json.dumps(payload,ensure_ascii=False,indent=2))
         return
     pipeline = Pipeline(settings)
     try:
