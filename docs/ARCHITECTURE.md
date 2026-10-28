@@ -41,3 +41,19 @@ S08: release registry, incremental rebuild, rollback, reliability reporting.
 - Retire historical indexes and atomic multi-document publication.
 - Batched true embedding indexing, scalable ANN, cached reranking.
 - DeepSeek quota, cost and latency metrics; dedicated LLM gateway.
+
+## Stage 02 semantic plane
+
+`datasets/stage02/aliases.json` → approved, temporal, tenant-scoped identity aliases
+→ canonical IDs. `ontology/enterprise.ttl` maps application concepts to IOF
+construct IRIs. `datasets/stage02/plant.json` → typed entities and sourced relations →
+`KnowledgeGraph.scoped` builds a filtered RDF graph. `ontology/shapes.ttl` + pySHACL
+check structural constraints. `competency.jsonl` gives independent 36-case expected results.
+
+- No arbitrary SPARQL accepted from users: read-only allowlisted relations, max five hops.
+- The actual IOF `hasRole` and `EquipmentRole` terms are used, but the full OWL
+  closure is **not imported**, therefore this stage makes no claim to complete
+  IOF classification, logical consistency checking, or cross-ontology interoperability.
+- The inferred meaning of absence is explicitly *no verified graph path*, not proof of absence.
+- Data is synthetic and tenants/groups are configured by the developer, not authenticated.
+- Graph-to-LLM tool routing and numerical calculations remain for S03–S05.

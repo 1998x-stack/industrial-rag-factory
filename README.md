@@ -101,3 +101,33 @@ PDF extraction is text-only (no OCR), DOCX tables have simplified serialization;
 ## License
 
 No license is granted until a LICENSE file is deliberately selected and committed.
+
+## Stage 02 — Ontology + Knowledge Graph (implemented)
+
+Stage 02 adds an **offline, read-only, IOF-aligned enterprise semantic graph**. It is a research
+implementation, not a full upstream OWL import or industrial operational knowledge graph.
+
+- Pin IOF Release 202603 and its stable construct namespace in `ontology/upstream.lock.json`
+- Keep enterprise classes/predicates in `ontology/enterprise.ttl`; use the **actual**
+  `iof:hasRole` and `iof:EquipmentRole` IRIs for equipment-role assertions
+- Resolve ERP/MES/SCADA/CMMS aliases only from approved, tenant-scoped, time-valid mappings
+- Construct RDF triples with relation source-record IDs, effective intervals and PROV citations
+- Validate closed-world data requirements with SHACL; do not confuse validation with source truth
+- Evaluate **36 manually specified competency questions** on a synthetic industrial graph
+
+Install and run, from repository root:
+
+```bash
+pip install -e '.[api,llm,pdf,docx,ontology,dev]'
+irf semantic-validate
+irf semantic-evaluate
+irf semantic-resolve EQ-00037 --system ERP --at-time 2026-10-20T10:00:00+08:00
+irf semantic-export outputs/graph_20261020.ttl
+irf serve
+# POST /v1/semantic/resolve and /v1/semantic/traverse (localhost development only)
+```
+
+The original document `query`, `ingest`, and `evaluate` commands remain unchanged.
+See [Stage 02 acceptance](docs/STAGE_02.md). **Stage 03** will connect this graph to
+the read-only SQL/time-series retrieval plane; the S01 LLM currently receives document
+evidence only, not authoritative graph-derived facts.

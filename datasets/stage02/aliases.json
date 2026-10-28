@@ -1,0 +1,171 @@
+[
+  {
+    "tenant_id": "demo",
+    "access_groups": [
+      "demo-readers"
+    ],
+    "system": "MES",
+    "external_id": "CUT-03",
+    "canonical_id": "CUT-03",
+    "approved": true,
+    "source_record_id": "MAP-001",
+    "valid_from": "2025-01-01T00:00:00+08:00",
+    "valid_to": null
+  },
+  {
+    "tenant_id": "demo",
+    "access_groups": [
+      "demo-readers"
+    ],
+    "system": "ERP",
+    "external_id": "EQ-00037",
+    "canonical_id": "CUT-03",
+    "approved": true,
+    "source_record_id": "MAP-002",
+    "valid_from": "2025-01-01T00:00:00+08:00",
+    "valid_to": null
+  },
+  {
+    "tenant_id": "demo",
+    "access_groups": [
+      "demo-readers"
+    ],
+    "system": "SCADA",
+    "external_id": "LINE1_CUTTER_03",
+    "canonical_id": "CUT-03",
+    "approved": true,
+    "source_record_id": "MAP-003",
+    "valid_from": "2025-01-01T00:00:00+08:00",
+    "valid_to": null
+  },
+  {
+    "tenant_id": "demo",
+    "access_groups": [
+      "demo-readers"
+    ],
+    "system": "MES",
+    "external_id": "CUT-04",
+    "canonical_id": "CUT-04",
+    "approved": true,
+    "source_record_id": "MAP-004",
+    "valid_from": "2025-01-01T00:00:00+08:00",
+    "valid_to": null
+  },
+  {
+    "tenant_id": "demo",
+    "access_groups": [
+      "demo-readers"
+    ],
+    "system": "ERP",
+    "external_id": "EQ-00038",
+    "canonical_id": "CUT-04",
+    "approved": true,
+    "source_record_id": "MAP-005",
+    "valid_from": "2025-01-01T00:00:00+08:00",
+    "valid_to": null
+  },
+  {
+    "tenant_id": "demo",
+    "access_groups": [
+      "demo-readers"
+    ],
+    "system": "CMMS",
+    "external_id": "P-102A",
+    "canonical_id": "P-102A",
+    "approved": true,
+    "source_record_id": "MAP-006",
+    "valid_from": "2025-01-01T00:00:00+08:00",
+    "valid_to": null
+  },
+  {
+    "tenant_id": "demo",
+    "access_groups": [
+      "demo-readers"
+    ],
+    "system": "SCADA",
+    "external_id": "SENSOR-LEGACY",
+    "canonical_id": "VIB03-A",
+    "approved": true,
+    "source_record_id": "MAP-007",
+    "valid_from": "2025-01-01T00:00:00+08:00",
+    "valid_to": "2026-05-01T00:00:00+08:00"
+  },
+  {
+    "tenant_id": "demo",
+    "access_groups": [
+      "demo-readers"
+    ],
+    "system": "SCADA",
+    "external_id": "SENSOR-LEGACY",
+    "canonical_id": "VIB03-B",
+    "approved": true,
+    "source_record_id": "MAP-008",
+    "valid_from": "2026-05-01T00:00:00+08:00",
+    "valid_to": null
+  },
+  {
+    "tenant_id": "demo",
+    "access_groups": [
+      "demo-readers"
+    ],
+    "system": "SCADA",
+    "external_id": "TAG_VIB03_NEW",
+    "canonical_id": "VIB03-B",
+    "approved": true,
+    "source_record_id": "MAP-009",
+    "valid_from": "2025-01-01T00:00:00+08:00",
+    "valid_to": null
+  },
+  {
+    "tenant_id": "demo",
+    "access_groups": [
+      "demo-readers"
+    ],
+    "system": "ERP",
+    "external_id": "NOT-APPROVED",
+    "canonical_id": "CUT-03",
+    "approved": false,
+    "source_record_id": "MAP-010",
+    "valid_from": "2025-01-01T00:00:00+08:00",
+    "valid_to": null
+  },
+  {
+    "tenant_id": "demo",
+    "access_groups": [
+      "demo-readers"
+    ],
+    "system": "MES",
+    "external_id": "DUPLICATE",
+    "canonical_id": "CUT-03",
+    "approved": true,
+    "source_record_id": "MAP-011",
+    "valid_from": "2025-01-01T00:00:00+08:00",
+    "valid_to": null
+  },
+  {
+    "tenant_id": "demo",
+    "access_groups": [
+      "demo-readers"
+    ],
+    "system": "ERP",
+    "external_id": "DUPLICATE",
+    "canonical_id": "CUT-04",
+    "approved": true,
+    "source_record_id": "MAP-012",
+    "valid_from": "2025-01-01T00:00:00+08:00",
+    "valid_to": null
+  },
+  {
+    "tenant_id": "other-tenant",
+    "access_groups": [
+      "other-readers"
+    ],
+    "system": "MES",
+    "external_id": "CUT-03",
+    "canonical_id": "CUT-03",
+    "approved": true,
+    "source_record_id": "FOREIGN-MAP",
+    "valid_from": "2025-01-01T00:00:00+08:00",
+    "valid_to": null
+  }
+]

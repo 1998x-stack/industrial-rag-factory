@@ -63,6 +63,44 @@ def create_app(settings: Settings | None = None, pipeline: Pipeline | None = Non
         except (ValueError,KeyError,TypeError) as exc:
             return jsonify({"error":str(exc)}),400
 
+    @app.post("/v1/semantic/resolve")
+    def semantic_resolve():
+        body = request.get_json(silent=True)
+        if not isinstance(body,dict) or any(
+            key in body for key in ("tenant_id","access_groups","groups","principal")
+        ):
+            return jsonify({"error":"Invalid JSON or server-controlled context"}),400
+        try:
+            identifier = body["external_id"]
+            if not isinstance(identifier,str) or len(identifier)>256:
+                raise ValueError("Invalid external_id")
+            from .semantic.service import SemanticService
+            service = SemanticService.from_defaults()
+            return jsonify(service.resolve(identifier,tenant_id=settings.tenant_id,
+                          groups=settings.groups,system=body.get("system"),
+                          at_time=body.get("at_time")))
+        except (KeyError,ValueError) as exc:
+            return jsonify({"error":str(exc)}),400
+
+    @app.post("/v1/semantic/traverse")
+    def semantic_traverse():
+        body = request.get_json(silent=True)
+        if not isinstance(body,dict) or any(
+            key in body for key in ("tenant_id","access_groups","groups","principal")
+        ):
+            return jsonify({"error":"Invalid JSON or server-controlled context"}),400
+        try:
+            start, steps = body["subject"], body["steps"]
+            if not isinstance(start,str) or not isinstance(steps,list):
+                raise ValueError("Invalid graph query")
+            from .semantic.service import SemanticService
+            service = SemanticService.from_defaults()
+            result = service.traverse(start,steps,tenant_id=settings.tenant_id,
+                                      groups=settings.groups,at_time=body.get("at_time"))
+            return jsonify(result)
+        except (KeyError,ValueError,TypeError) as exc:
+            return jsonify({"error":str(exc)}),400
+
     return app
 
 

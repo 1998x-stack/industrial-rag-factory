@@ -1,0 +1,12 @@
+{
+  "scope": "Stage 02 read-only alignment metadata; normative upstream OWL imports NOT vendored",
+  "iof_core_release": "202603",
+  "iof_version_iri": "https://spec.industrialontologies.org/ontology/202603/core/Core/",
+  "iof_construct_iri": "https://spec.industrialontologies.org/ontology/construct/",
+  "source_release_url": "https://github.com/iofoundry/ontology/releases/tag/Release_202603",
+  "source_release_commit_abbrev": "0c5af08",
+  "upstream_license": "MIT",
+  "bfo_dependency": "BFO 2020 (resolved by IOF AboutIOFProd.rdf, not included locally)",
+  "local_semantics": "enterprise subclass mappings and SHACL only, not full IOF OWL inference",
+  "release_upgrade_policy": "explicit review of changed axioms, CQ evaluation, mapping review, rollback"
+}

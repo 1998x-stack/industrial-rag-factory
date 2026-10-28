@@ -1,0 +1,36 @@
+{"id":"CQ-01","question":"CUT-03 的设备角色是什么？","subject":"CUT-03","steps":[{"predicate":"hasRole","direction":"out"}],"expected":["ROLE-CUT03"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-02","question":"CUT-04 的设备角色是什么？","subject":"CUT-04","steps":[{"predicate":"hasRole","direction":"out"}],"expected":["ROLE-CUT04"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-03","question":"P-102A 的设备角色是什么？","subject":"P-102A","steps":[{"predicate":"hasRole","direction":"out"}],"expected":["ROLE-P102"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-04","question":"更换传感器之前，CUT-03 有哪些测点？","subject":"CUT-03","steps":[{"predicate":"hasMeasurementPoint","direction":"out"}],"expected":["TEMP03","VIB03-A"],"at_time":"2026-02-01T10:00:00+08:00"}
+{"id":"CQ-05","question":"更换传感器之后，CUT-03 有哪些测点？","subject":"CUT-03","steps":[{"predicate":"hasMeasurementPoint","direction":"out"}],"expected":["TEMP03","VIB03-B"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-06","question":"CUT-04 当前的测点是什么？","subject":"CUT-04","steps":[{"predicate":"hasMeasurementPoint","direction":"out"}],"expected":["VIB04"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-07","question":"P-102A 当前的测点是什么？","subject":"P-102A","steps":[{"predicate":"hasMeasurementPoint","direction":"out"}],"expected":["NOISE-P102"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-08","question":"历史测点 VIB03-A 当时绑定哪个设备？","subject":"VIB03-A","steps":[{"predicate":"measuresAsset","direction":"out"}],"expected":["CUT-03"],"at_time":"2026-02-01T10:00:00+08:00"}
+{"id":"CQ-09","question":"VIB03-A 在新版本生效后是否仍有绑定？","subject":"VIB03-A","steps":[{"predicate":"measuresAsset","direction":"out"}],"expected":[],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-10","question":"VIB03-B 在新版本生效后绑定哪个设备？","subject":"VIB03-B","steps":[{"predicate":"measuresAsset","direction":"out"}],"expected":["CUT-03"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-11","question":"批次 B-104 有什么实际执行记录？","subject":"B-104","steps":[{"predicate":"forBatch","direction":"in"}],"expected":["EXEC-104"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-12","question":"批次 B-105 有什么实际执行记录？","subject":"B-105","steps":[{"predicate":"forBatch","direction":"in"}],"expected":["EXEC-105"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-13","question":"EXEC-104 使用了哪台设备？","subject":"EXEC-104","steps":[{"predicate":"usesEquipment","direction":"out"}],"expected":["CUT-03"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-14","question":"EXEC-105 使用了哪台设备？","subject":"EXEC-105","steps":[{"predicate":"usesEquipment","direction":"out"}],"expected":["CUT-04"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-15","question":"工单 WO-104 对应哪个执行过程？","subject":"WO-104","steps":[{"predicate":"implementsWorkOrder","direction":"in"}],"expected":["EXEC-104"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-16","question":"工单 WO-105 对应哪个执行过程？","subject":"WO-105","steps":[{"predicate":"implementsWorkOrder","direction":"in"}],"expected":["EXEC-105"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-17","question":"批次 B-104 实际使用了什么设备？","subject":"B-104","steps":[{"predicate":"forBatch","direction":"in"},{"predicate":"usesEquipment","direction":"out"}],"expected":["CUT-03"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-18","question":"批次 B-105 实际使用了什么设备？","subject":"B-105","steps":[{"predicate":"forBatch","direction":"in"},{"predicate":"usesEquipment","direction":"out"}],"expected":["CUT-04"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-19","question":"批次 B-104 使用哪个工艺规范？","subject":"B-104","steps":[{"predicate":"forBatch","direction":"in"},{"predicate":"governedBySpecification","direction":"out"}],"expected":["SPEC-C"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-20","question":"批次 B-105 使用哪个工艺规范？","subject":"B-105","steps":[{"predicate":"forBatch","direction":"in"},{"predicate":"governedBySpecification","direction":"out"}],"expected":["SPEC-D"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-21","question":"CUT-03 的设备规范是什么？","subject":"CUT-03","steps":[{"predicate":"governedBySpecification","direction":"out"}],"expected":["SPEC-C"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-22","question":"CUT-04 的设备规范是什么？","subject":"CUT-04","steps":[{"predicate":"governedBySpecification","direction":"out"}],"expected":["SPEC-D"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-23","question":"CUT-03 位于哪个区域？","subject":"CUT-03","steps":[{"predicate":"locatedIn","direction":"out"}],"expected":["AREA-A"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-24","question":"CUT-04 位于哪个区域？","subject":"CUT-04","steps":[{"predicate":"locatedIn","direction":"out"}],"expected":["AREA-B"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-25","question":"P-102A 位于哪个区域？","subject":"P-102A","steps":[{"predicate":"locatedIn","direction":"out"}],"expected":["AREA-A"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-26","question":"AREA-A 里有哪几台设备？","subject":"AREA-A","steps":[{"predicate":"locatedIn","direction":"in"}],"expected":["CUT-03","P-102A"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-27","question":"CUT-03 有什么维护记录？","subject":"CUT-03","steps":[{"predicate":"hasMaintenanceEvent","direction":"out"}],"expected":["MAINT-001"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-28","question":"P-102A 有什么维护记录？","subject":"P-102A","steps":[{"predicate":"hasMaintenanceEvent","direction":"out"}],"expected":["MAINT-002"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-29","question":"CUT-03 含有哪些部件？","subject":"CUT-03","steps":[{"predicate":"hasPart","direction":"out"}],"expected":["HEAD-03"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-30","question":"CUT-04 含有哪些部件？","subject":"CUT-04","steps":[{"predicate":"hasPart","direction":"out"}],"expected":["HEAD-04"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-31","question":"批次 B-104 在 2026-10 的设备测点是什么？","subject":"B-104","steps":[{"predicate":"forBatch","direction":"in"},{"predicate":"usesEquipment","direction":"out"},{"predicate":"hasMeasurementPoint","direction":"out"}],"expected":["TEMP03","VIB03-B"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-32","question":"批次 B-105 的设备测点是什么？","subject":"B-105","steps":[{"predicate":"forBatch","direction":"in"},{"predicate":"usesEquipment","direction":"out"},{"predicate":"hasMeasurementPoint","direction":"out"}],"expected":["VIB04"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-33","question":"P-102A 需要哪份规范？","subject":"P-102A","steps":[{"predicate":"requiresSpecification","direction":"out"}],"expected":["PUMP-SPEC"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-34","question":"ROLE-CUT03 是哪个设备的角色？","subject":"ROLE-CUT03","steps":[{"predicate":"hasRole","direction":"in"}],"expected":["CUT-03"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-35","question":"MAINT-001 对应哪个设备？","subject":"MAINT-001","steps":[{"predicate":"hasMaintenanceEvent","direction":"in"}],"expected":["CUT-03"],"at_time":"2026-10-20T10:00:00+08:00"}
+{"id":"CQ-36","question":"SPEC-C 管理哪些实体？","subject":"SPEC-C","steps":[{"predicate":"governedBySpecification","direction":"in"}],"expected":["CUT-03","EXEC-104"],"at_time":"2026-10-20T10:00:00+08:00"}
