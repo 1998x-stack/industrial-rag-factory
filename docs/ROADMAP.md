@@ -21,7 +21,7 @@ Stages are **sequential acceptance gates**, not claims that future components al
 - Freeze Python and dependency major versions; make CI deterministic.
 - Document source, chunk, query and evidence contracts.
 
-### S01 [in progress via branch feat/stage-01-document-rag]
+### S01 [delivered via PR #1; merged into main]
 - S01-T01 document fixtures and parsers, including scanned-PDF detection/fail-closed.
 - S01-T02 deterministic heading-aware chunking and overlap control.
 - S01-T03 content hashes, revisions and active-index treatment.
@@ -33,7 +33,7 @@ Stages are **sequential acceptance gates**, not claims that future components al
 - S01-T09 golden retrieval evaluation and negative tests.
 - S01-T10 CI, README, AGENTS and reproducibility report.
 
-### S02
+### S02 [IOF-aligned offline semantic baseline delivered on Stage 02 branch; remaining full-import tasks documented in docs/STAGE_02.md]
 - S02-T01 pin and mirror IOF/BFO release with license/provenance.
 - S02-T02 define enterprise asset/process/measurement ontology.
 - S02-T03 implement source-to-IRI mappings and time-bounded identity joins.

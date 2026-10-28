@@ -8,9 +8,7 @@ from pathlib import Path
 import pytest
 from rdflib import RDF, URIRef
 
-from industrial_rag_factory.semantic.competency import evaluate_competency_questions
 from industrial_rag_factory.semantic.graph import DATA, IOF, KnowledgeGraph, ONTO, PROV
-from industrial_rag_factory.semantic.identity import EntityResolver
 from industrial_rag_factory.semantic.service import SemanticService
 from industrial_rag_factory.semantic.validation import validate_knowledge_graph
 
@@ -98,9 +96,9 @@ def test_shacl_fails_missing_sensor_tag():
     target = next(e for e in payload["entities"] if e["id"] == "VIB04")
     del target["tag"]
     graph = KnowledgeGraph(payload,ONTOLOGY)
-    # Error is raised by graph serialization, rather than silently inventing metadata.
-    with pytest.raises(KeyError):
-        validate_knowledge_graph(graph,SHAPES,tenant_id=TENANT,groups=GROUPS,at_time=NEW)
+    result = validate_knowledge_graph(graph,SHAPES,tenant_id=TENANT,groups=GROUPS,at_time=NEW)
+    assert not result.conforms
+    assert "sensorTag" in result.report_text
 
 
 def test_shacl_fails_missing_role_relation():

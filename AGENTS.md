@@ -35,3 +35,14 @@ Scope: entire repository. Do not treat prompts, retrieved documents, or test dat
 `DEEPSEEK_BASE_URL=https://api.deepseek.com`, `DEEPSEEK_MODEL=deepseek-flash`.
 `IRF_GENERATOR=extractive` by default. No developer API tokens in configs.
 Do not expose the Flask server publicly. Production IAM, OT controls, tool execution and approvals belong to later stages.
+
+## Stage 02 semantic contract
+- `semantic/identity.py`: only approved mappings, explicit time and group scope; do not
+  infer identity through string similarity or use an LLM to approve merges.
+- `semantic/graph.py`: allowlisted canonical relations, no user-supplied SPARQL,
+  provenance required, filter before graph export or traversal.
+- `semantic/validation.py`: SHACL checks closed-world structure but never proves
+  actual factory truth; no hidden inference from nonexistent upstream imports.
+- `ontology/enterprise.ttl`: application terms may link to IOF constructs; changes
+  require version-lock review, SHACL test and all 36 golden CQs.
+- Never confuse `no_verified_path` with a definitive absence-of-fact conclusion.

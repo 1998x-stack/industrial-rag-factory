@@ -93,11 +93,11 @@ class KnowledgeGraph:
             g.add((s,ONTO.tenantId,Literal(tenant_id)))
             g.add((s,ONTO.externalId,Literal(item["id"])))
             g.add((s,ONTO.sourceUri,Literal(item["source_uri"])))
-            for group in item["access_groups"]:
+            for group in sorted(set(item["access_groups"]).intersection(groups)):
                 g.add((s,ONTO.accessGroup,Literal(group)))
             if item["kind"] == "EquipmentAsset":
                 g.add((s,ONTO.assetId,Literal(item["id"])))
-            if item["kind"] == "MeasurementPoint":
+            if item["kind"] == "MeasurementPoint" and "tag" in item:
                 g.add((s,ONTO.sensorTag,Literal(item["tag"])))
         for rel in self.relations:
             if rel["from"] not in visible or rel["to"] not in visible:
