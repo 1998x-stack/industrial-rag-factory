@@ -1,0 +1,33 @@
+@prefix ex: <https://example.org/industrial/ontology/> .
+@prefix iof: <https://spec.industrialontologies.org/ontology/construct/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:AssetShape a sh:NodeShape ; sh:targetClass ex:EquipmentAsset ;
+  sh:property [ sh:path ex:assetId ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path ex:hasRole ; sh:minCount 1 ; sh:class iof:EquipmentRole ] ;
+  sh:property [ sh:path ex:tenantId ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path ex:sourceUri ; sh:minCount 1 ] .
+
+ex:PointShape a sh:NodeShape ; sh:targetClass ex:MeasurementPoint ;
+  sh:property [ sh:path ex:sensorTag ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path ex:measuresAsset ; sh:minCount 1 ; sh:maxCount 1 ; sh:class ex:EquipmentAsset ] ;
+  sh:property [ sh:path ex:sourceUri ; sh:minCount 1 ] .
+
+ex:ExecutionShape a sh:NodeShape ; sh:targetClass ex:Execution ;
+  sh:property [ sh:path ex:forBatch ; sh:minCount 1 ; sh:class ex:ProductionBatch ] ;
+  sh:property [ sh:path ex:implementsWorkOrder ; sh:minCount 1 ; sh:class ex:WorkOrder ] ;
+  sh:property [ sh:path ex:usesEquipment ; sh:minCount 1 ; sh:class ex:EquipmentAsset ] .
+
+ex:IdentityShape a sh:NodeShape ;
+  sh:targetClass ex:EquipmentAsset ;
+  sh:targetClass ex:MeasurementPoint ;
+  sh:targetClass ex:ProductionBatch ;
+  sh:targetClass ex:WorkOrder ;
+  sh:targetClass ex:Execution ;
+  sh:targetClass ex:MaintenanceEvent ;
+  sh:targetClass ex:Specification ;
+  sh:targetClass ex:PlantArea ;
+  sh:targetClass ex:MaterialComponent ;
+  sh:property [ sh:path ex:externalId ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path ex:sourceUri ; sh:minCount 1 ; sh:maxCount 1 ] .

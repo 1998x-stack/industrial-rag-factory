@@ -1,0 +1,42 @@
+@prefix ex: <https://example.org/industrial/ontology/> .
+@prefix iof: <https://spec.industrialontologies.org/ontology/construct/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.org/industrial/ontology/stage02> a owl:Ontology ;
+  rdfs:comment "Synthetic enterprise ontology, aligned to IOF Core 202603. This file does not reproduce or import the entire IOF release." ;
+  owl:versionInfo "0.2.0" .
+
+ex:EquipmentAsset a owl:Class ; rdfs:subClassOf iof:MaterialArtifact ;
+  rdfs:label "Enterprise equipment asset" .
+ex:ProductionBatch a owl:Class ; rdfs:label "Production batch" .
+ex:WorkOrder a owl:Class ; rdfs:label "Work order record" .
+ex:Execution a owl:Class ; rdfs:label "Observed execution record" .
+ex:MeasurementPoint a owl:Class ; rdfs:label "Configured measurement point" .
+ex:MaintenanceEvent a owl:Class ; rdfs:label "Recorded maintenance event" .
+ex:Specification a owl:Class ; rdfs:label "Applicable specification record" .
+ex:PlantArea a owl:Class ; rdfs:label "Plant area" .
+ex:MaterialComponent a owl:Class ; rdfs:label "Material component" .
+
+ex:hasRole a owl:ObjectProperty ; rdfs:range iof:EquipmentRole .
+ex:hasMeasurementPoint a owl:ObjectProperty ; rdfs:domain ex:EquipmentAsset ; rdfs:range ex:MeasurementPoint .
+ex:measuresAsset a owl:ObjectProperty ; rdfs:domain ex:MeasurementPoint ; rdfs:range ex:EquipmentAsset .
+ex:forBatch a owl:ObjectProperty ; rdfs:domain ex:Execution ; rdfs:range ex:ProductionBatch .
+ex:implementsWorkOrder a owl:ObjectProperty ; rdfs:domain ex:Execution ; rdfs:range ex:WorkOrder .
+ex:usesEquipment a owl:ObjectProperty ; rdfs:domain ex:Execution ; rdfs:range ex:EquipmentAsset .
+ex:governedBySpecification a owl:ObjectProperty ; rdfs:range ex:Specification .
+ex:hasMaintenanceEvent a owl:ObjectProperty ; rdfs:domain ex:EquipmentAsset ; rdfs:range ex:MaintenanceEvent .
+ex:locatedIn a owl:ObjectProperty ; rdfs:range ex:PlantArea .
+ex:hasPart a owl:ObjectProperty ; rdfs:range ex:MaterialComponent .
+ex:requiresSpecification a owl:ObjectProperty ; rdfs:range ex:Specification .
+
+ex:assetId a owl:DatatypeProperty ; rdfs:range xsd:string .
+ex:sensorTag a owl:DatatypeProperty ; rdfs:range xsd:string .
+ex:externalId a owl:DatatypeProperty ; rdfs:range xsd:string .
+ex:tenantId a owl:DatatypeProperty ; rdfs:range xsd:string .
+ex:accessGroup a owl:DatatypeProperty ; rdfs:range xsd:string .
+ex:sourceUri a owl:DatatypeProperty ; rdfs:range xsd:string .
+ex:sourceRecordId a owl:DatatypeProperty ; rdfs:range xsd:string .
+ex:validFrom a owl:DatatypeProperty ; rdfs:range xsd:dateTime .
+ex:validTo a owl:DatatypeProperty ; rdfs:range xsd:dateTime .
