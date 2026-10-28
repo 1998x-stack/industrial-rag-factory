@@ -80,6 +80,8 @@ def test_mapping_resolution_and_no_llm_merging(service):
                             groups=("other-readers",)).canonical_id == "CUT-03"
     assert resolver.resolve("CUT-03",system="MES",tenant_id="other-tenant",
                             groups=GROUPS).status == "unresolved"
+    assert service.resolve("CUT-03",system="MES",tenant_id="other-tenant",
+                           groups=("other-readers",))["status"] == "unresolved"
 
 
 def test_acl_no_graph_leak(service,tmp_path):
@@ -156,3 +158,17 @@ def test_cli_compatibility_and_flask_semantic_routes(service,tmp_path,monkeypatc
     assert result.json["results"] == ["CUT-03"]
     assert client.post("/v1/semantic/traverse",json={
         "subject":"B-104","steps":[],"tenant_id":"other-tenant"}).status_code == 400
+
+
+def test_shacl_detects_provenance_gap():
+    payload = json.loads(PLANT.read_text(encoding="utf-8"))
+    graph = KnowledgeGraph(payload,ONTOLOGY)
+    from rdflib import Graph
+    from pyshacl import validate as shacl_validate
+    data = graph.scoped(tenant_id=TENANT,groups=GROUPS,at_time=NEW)
+    statement = DATA["assertion-R001"]
+    data.remove((statement,PROV.wasDerivedFrom,None))
+    shape = Graph().parse(str(SHAPES),format="turtle")
+    conforms,_,report = shacl_validate(data,shacl_graph=shape,inference="none")
+    assert not conforms
+    assert "wasDerivedFrom" in str(report)

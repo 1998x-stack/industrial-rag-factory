@@ -28,9 +28,16 @@ class SemanticService:
     def resolve(self, external_id: str, *, tenant_id: str,
                 groups: tuple[str, ...], system: str | None = None,
                 at_time: str | None = None) -> dict:
-        return self.resolver.resolve(external_id,tenant_id=tenant_id,
-                                     groups=groups,system=system,
-                                     at_time=at_time).to_dict()
+        resolved = self.resolver.resolve(external_id,tenant_id=tenant_id,
+                                         groups=groups,system=system,
+                                         at_time=at_time)
+        # An approved alias does not by itself grant access to the referenced entity.
+        if resolved.canonical_id and not self.graph.visible(
+            resolved.canonical_id,tenant_id=tenant_id,groups=groups,at_time=at_time
+        ):
+            return {"status":"unresolved","canonical_id":None,
+                    "candidates":[],"source_records":[]}
+        return resolved.to_dict()
 
     def validate(self, *, tenant_id: str, groups: tuple[str, ...],
                  at_time: str | None = None) -> dict:

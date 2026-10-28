@@ -1,6 +1,8 @@
 @prefix ex: <https://example.org/industrial/ontology/> .
 @prefix iof: <https://spec.industrialontologies.org/ontology/construct/> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 ex:AssetShape a sh:NodeShape ; sh:targetClass ex:EquipmentAsset ;
@@ -31,3 +33,10 @@ ex:IdentityShape a sh:NodeShape ;
   sh:targetClass ex:MaterialComponent ;
   sh:property [ sh:path ex:externalId ; sh:minCount 1 ; sh:maxCount 1 ] ;
   sh:property [ sh:path ex:sourceUri ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+ex:ProvenanceShape a sh:NodeShape ; sh:targetClass rdf:Statement ;
+  sh:property [ sh:path rdf:subject ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path rdf:predicate ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path rdf:object ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path prov:wasDerivedFrom ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path ex:sourceRecordId ; sh:minCount 1 ; sh:maxCount 1 ] .

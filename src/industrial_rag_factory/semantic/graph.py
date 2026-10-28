@@ -93,6 +93,10 @@ class KnowledgeGraph:
             g.add((s,ONTO.tenantId,Literal(tenant_id)))
             g.add((s,ONTO.externalId,Literal(item["id"])))
             g.add((s,ONTO.sourceUri,Literal(item["source_uri"])))
+            if item.get("valid_from"):
+                g.add((s,ONTO.validFrom,Literal(item["valid_from"],datatype=XSD.dateTime)))
+            if item.get("valid_to"):
+                g.add((s,ONTO.validTo,Literal(item["valid_to"],datatype=XSD.dateTime)))
             for group in sorted(set(item["access_groups"]).intersection(groups)):
                 g.add((s,ONTO.accessGroup,Literal(group)))
             if item["kind"] == "EquipmentAsset":
