@@ -11,12 +11,12 @@ def chunk_document(doc: Document, max_tokens: int = 220, overlap: int = 40) -> l
     if max_tokens < 10 or overlap < 0 or overlap >= max_tokens:
         raise ValueError("Invalid max_tokens/overlap")
     sections: list[tuple[str, str]] = []
-    headings: list[str] = []
+    headings: list[tuple[int, str]] = []
     buffer: list[str] = []
 
     def flush() -> None:
         if buffer and "\n".join(buffer).strip():
-            sections.append((" > ".join(headings) or "root", "\n".join(buffer).strip()))
+            sections.append((" > ".join(label for _, label in headings) or "root", "\n".join(buffer).strip()))
         buffer.clear()
 
     for line in doc.text.splitlines():
@@ -24,20 +24,20 @@ def chunk_document(doc: Document, max_tokens: int = 220, overlap: int = 40) -> l
         if m:
             flush()
             level = len(m.group(1))
-            headings[:] = headings[:level-1]
-            headings.append(m.group(2))
+            headings[:] = [(n, label) for n, label in headings if n < level]
+            headings.append((level, m.group(2)))
         else:
             buffer.append(line)
     flush()
     output = []
     for section, text in sections:
-        tokens = TOKENS.findall(text)
+        tokens = list(TOKENS.finditer(text))
         step = max_tokens - overlap
         for offset in range(0, len(tokens), step):
             window = tokens[offset:offset+max_tokens]
             if not window:
                 break
-            body = " ".join(window)
+            body = text[window[0].start():window[-1].end()]
             cid = hashlib.sha256(
                 f"{doc.document_id}:{section}:{offset}:{body}".encode()
             ).hexdigest()[:24]

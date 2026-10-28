@@ -1,6 +1,5 @@
 """Stage 01 tests are offline and require no DeepSeek API key."""
 from pathlib import Path
-import json
 import pytest
 
 from industrial_rag_factory.chunking import chunk_document
@@ -121,7 +120,7 @@ def test_invalid_and_missing():
 
 
 def test_flask_local_only(tmp_path):
-    flask = pytest.importorskip("flask")
+    pytest.importorskip("flask")
     from industrial_rag_factory.api import create_app
     settings = Settings(db_path=str(tmp_path/"flask.sqlite3"))
     app = create_app(settings)

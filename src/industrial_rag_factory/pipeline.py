@@ -1,10 +1,8 @@
 """S01 end-to-end ingestion, retrieval, citation-labelled generation."""
 from __future__ import annotations
-import re
 from .chunking import chunk_document
 from .config import Settings
 from .contracts import Answer, Document
-from .embedding import create_embedder
 from .llm import DeepSeekGenerator
 from .retrieval import Retriever
 from .storage import Store
