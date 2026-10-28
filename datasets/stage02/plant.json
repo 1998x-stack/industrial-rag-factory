@@ -1,0 +1,583 @@
+{
+  "dataset": "Synthetic industrial graph; no real facility data",
+  "schema_version": "stage02-v1",
+  "entities": [
+    {
+      "id": "CUT-03",
+      "kind": "EquipmentAsset",
+      "label": "切割机03",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/CUT-03"
+    },
+    {
+      "id": "CUT-04",
+      "kind": "EquipmentAsset",
+      "label": "切割机04",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/CUT-04"
+    },
+    {
+      "id": "P-102A",
+      "kind": "EquipmentAsset",
+      "label": "泵P-102A",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/P-102A"
+    },
+    {
+      "id": "ROLE-CUT03",
+      "kind": "EquipmentRole",
+      "label": "设备角色 ROLE-CUT03",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/ROLE-CUT03"
+    },
+    {
+      "id": "ROLE-CUT04",
+      "kind": "EquipmentRole",
+      "label": "设备角色 ROLE-CUT04",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/ROLE-CUT04"
+    },
+    {
+      "id": "ROLE-P102",
+      "kind": "EquipmentRole",
+      "label": "设备角色 ROLE-P102",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/ROLE-P102"
+    },
+    {
+      "id": "VIB03-A",
+      "kind": "MeasurementPoint",
+      "label": "测点 VIB03-A",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/VIB03-A",
+      "tag": "TAG_VIB03_A"
+    },
+    {
+      "id": "VIB03-B",
+      "kind": "MeasurementPoint",
+      "label": "测点 VIB03-B",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/VIB03-B",
+      "tag": "TAG_VIB03_B"
+    },
+    {
+      "id": "TEMP03",
+      "kind": "MeasurementPoint",
+      "label": "测点 TEMP03",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/TEMP03",
+      "tag": "TAG_TEMP03"
+    },
+    {
+      "id": "VIB04",
+      "kind": "MeasurementPoint",
+      "label": "测点 VIB04",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/VIB04",
+      "tag": "TAG_VIB04"
+    },
+    {
+      "id": "NOISE-P102",
+      "kind": "MeasurementPoint",
+      "label": "测点 NOISE-P102",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/NOISE-P102",
+      "tag": "TAG_NOISE_P102"
+    },
+    {
+      "id": "B-104",
+      "kind": "ProductionBatch",
+      "label": "批次 B-104",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/B-104"
+    },
+    {
+      "id": "B-105",
+      "kind": "ProductionBatch",
+      "label": "批次 B-105",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/B-105"
+    },
+    {
+      "id": "WO-104",
+      "kind": "WorkOrder",
+      "label": "工单 WO-104",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/WO-104"
+    },
+    {
+      "id": "WO-105",
+      "kind": "WorkOrder",
+      "label": "工单 WO-105",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/WO-105"
+    },
+    {
+      "id": "EXEC-104",
+      "kind": "Execution",
+      "label": "生产执行 EXEC-104",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/EXEC-104"
+    },
+    {
+      "id": "EXEC-105",
+      "kind": "Execution",
+      "label": "生产执行 EXEC-105",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/EXEC-105"
+    },
+    {
+      "id": "MAINT-001",
+      "kind": "MaintenanceEvent",
+      "label": "维护 MAINT-001",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/MAINT-001"
+    },
+    {
+      "id": "MAINT-002",
+      "kind": "MaintenanceEvent",
+      "label": "维护 MAINT-002",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/MAINT-002"
+    },
+    {
+      "id": "SPEC-C",
+      "kind": "Specification",
+      "label": "规范 SPEC-C",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/SPEC-C"
+    },
+    {
+      "id": "SPEC-D",
+      "kind": "Specification",
+      "label": "规范 SPEC-D",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/SPEC-D"
+    },
+    {
+      "id": "PUMP-SPEC",
+      "kind": "Specification",
+      "label": "规范 PUMP-SPEC",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/PUMP-SPEC"
+    },
+    {
+      "id": "AREA-A",
+      "kind": "PlantArea",
+      "label": "区域 AREA-A",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/AREA-A"
+    },
+    {
+      "id": "AREA-B",
+      "kind": "PlantArea",
+      "label": "区域 AREA-B",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/AREA-B"
+    },
+    {
+      "id": "HEAD-03",
+      "kind": "MaterialComponent",
+      "label": "部件 HEAD-03",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/HEAD-03"
+    },
+    {
+      "id": "HEAD-04",
+      "kind": "MaterialComponent",
+      "label": "部件 HEAD-04",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://master/HEAD-04"
+    }
+  ],
+  "relations": [
+    {
+      "id": "R001",
+      "from": "CUT-03",
+      "to": "ROLE-CUT03",
+      "predicate": "hasRole",
+      "source_uri": "fixture://relations/R001",
+      "source_record_id": "REC-R001",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R002",
+      "from": "CUT-04",
+      "to": "ROLE-CUT04",
+      "predicate": "hasRole",
+      "source_uri": "fixture://relations/R002",
+      "source_record_id": "REC-R002",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R003",
+      "from": "P-102A",
+      "to": "ROLE-P102",
+      "predicate": "hasRole",
+      "source_uri": "fixture://relations/R003",
+      "source_record_id": "REC-R003",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R004",
+      "from": "CUT-03",
+      "to": "VIB03-A",
+      "predicate": "hasMeasurementPoint",
+      "source_uri": "fixture://relations/R004",
+      "source_record_id": "REC-R004",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": "2026-05-01T00:00:00+08:00"
+    },
+    {
+      "id": "R005",
+      "from": "CUT-03",
+      "to": "VIB03-B",
+      "predicate": "hasMeasurementPoint",
+      "source_uri": "fixture://relations/R005",
+      "source_record_id": "REC-R005",
+      "valid_from": "2026-05-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R006",
+      "from": "CUT-03",
+      "to": "TEMP03",
+      "predicate": "hasMeasurementPoint",
+      "source_uri": "fixture://relations/R006",
+      "source_record_id": "REC-R006",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R007",
+      "from": "CUT-04",
+      "to": "VIB04",
+      "predicate": "hasMeasurementPoint",
+      "source_uri": "fixture://relations/R007",
+      "source_record_id": "REC-R007",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R008",
+      "from": "P-102A",
+      "to": "NOISE-P102",
+      "predicate": "hasMeasurementPoint",
+      "source_uri": "fixture://relations/R008",
+      "source_record_id": "REC-R008",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R009",
+      "from": "VIB03-A",
+      "to": "CUT-03",
+      "predicate": "measuresAsset",
+      "source_uri": "fixture://relations/R009",
+      "source_record_id": "REC-R009",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": "2026-05-01T00:00:00+08:00"
+    },
+    {
+      "id": "R010",
+      "from": "VIB03-B",
+      "to": "CUT-03",
+      "predicate": "measuresAsset",
+      "source_uri": "fixture://relations/R010",
+      "source_record_id": "REC-R010",
+      "valid_from": "2026-05-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R011",
+      "from": "TEMP03",
+      "to": "CUT-03",
+      "predicate": "measuresAsset",
+      "source_uri": "fixture://relations/R011",
+      "source_record_id": "REC-R011",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R012",
+      "from": "VIB04",
+      "to": "CUT-04",
+      "predicate": "measuresAsset",
+      "source_uri": "fixture://relations/R012",
+      "source_record_id": "REC-R012",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R013",
+      "from": "NOISE-P102",
+      "to": "P-102A",
+      "predicate": "measuresAsset",
+      "source_uri": "fixture://relations/R013",
+      "source_record_id": "REC-R013",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R014",
+      "from": "EXEC-104",
+      "to": "B-104",
+      "predicate": "forBatch",
+      "source_uri": "fixture://relations/R014",
+      "source_record_id": "REC-R014",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R015",
+      "from": "EXEC-105",
+      "to": "B-105",
+      "predicate": "forBatch",
+      "source_uri": "fixture://relations/R015",
+      "source_record_id": "REC-R015",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R016",
+      "from": "EXEC-104",
+      "to": "WO-104",
+      "predicate": "implementsWorkOrder",
+      "source_uri": "fixture://relations/R016",
+      "source_record_id": "REC-R016",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R017",
+      "from": "EXEC-105",
+      "to": "WO-105",
+      "predicate": "implementsWorkOrder",
+      "source_uri": "fixture://relations/R017",
+      "source_record_id": "REC-R017",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R018",
+      "from": "EXEC-104",
+      "to": "CUT-03",
+      "predicate": "usesEquipment",
+      "source_uri": "fixture://relations/R018",
+      "source_record_id": "REC-R018",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R019",
+      "from": "EXEC-105",
+      "to": "CUT-04",
+      "predicate": "usesEquipment",
+      "source_uri": "fixture://relations/R019",
+      "source_record_id": "REC-R019",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R020",
+      "from": "EXEC-104",
+      "to": "SPEC-C",
+      "predicate": "governedBySpecification",
+      "source_uri": "fixture://relations/R020",
+      "source_record_id": "REC-R020",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R021",
+      "from": "EXEC-105",
+      "to": "SPEC-D",
+      "predicate": "governedBySpecification",
+      "source_uri": "fixture://relations/R021",
+      "source_record_id": "REC-R021",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R022",
+      "from": "CUT-03",
+      "to": "SPEC-C",
+      "predicate": "governedBySpecification",
+      "source_uri": "fixture://relations/R022",
+      "source_record_id": "REC-R022",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R023",
+      "from": "CUT-04",
+      "to": "SPEC-D",
+      "predicate": "governedBySpecification",
+      "source_uri": "fixture://relations/R023",
+      "source_record_id": "REC-R023",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R024",
+      "from": "CUT-03",
+      "to": "AREA-A",
+      "predicate": "locatedIn",
+      "source_uri": "fixture://relations/R024",
+      "source_record_id": "REC-R024",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R025",
+      "from": "CUT-04",
+      "to": "AREA-B",
+      "predicate": "locatedIn",
+      "source_uri": "fixture://relations/R025",
+      "source_record_id": "REC-R025",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R026",
+      "from": "P-102A",
+      "to": "AREA-A",
+      "predicate": "locatedIn",
+      "source_uri": "fixture://relations/R026",
+      "source_record_id": "REC-R026",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R027",
+      "from": "CUT-03",
+      "to": "MAINT-001",
+      "predicate": "hasMaintenanceEvent",
+      "source_uri": "fixture://relations/R027",
+      "source_record_id": "REC-R027",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R028",
+      "from": "P-102A",
+      "to": "MAINT-002",
+      "predicate": "hasMaintenanceEvent",
+      "source_uri": "fixture://relations/R028",
+      "source_record_id": "REC-R028",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R029",
+      "from": "CUT-03",
+      "to": "HEAD-03",
+      "predicate": "hasPart",
+      "source_uri": "fixture://relations/R029",
+      "source_record_id": "REC-R029",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R030",
+      "from": "CUT-04",
+      "to": "HEAD-04",
+      "predicate": "hasPart",
+      "source_uri": "fixture://relations/R030",
+      "source_record_id": "REC-R030",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    },
+    {
+      "id": "R031",
+      "from": "P-102A",
+      "to": "PUMP-SPEC",
+      "predicate": "requiresSpecification",
+      "source_uri": "fixture://relations/R031",
+      "source_record_id": "REC-R031",
+      "valid_from": "2025-01-01T00:00:00+08:00",
+      "valid_to": null
+    }
+  ]
+}
