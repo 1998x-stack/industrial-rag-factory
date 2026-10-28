@@ -19,3 +19,12 @@ jobs:
       - run: pip install -e '.[api,llm,pdf,docx,dev]'
       - run: python -m pytest -q
       - run: python -m ruff check src tests
+
+      - name: Offline Stage 01 ablation
+        run: python scripts/stage01_ablate.py
+      - name: Publish Stage 01 ablation
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage01-ablation
+          path: outputs/stage01_ablation.json

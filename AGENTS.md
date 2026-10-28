@@ -20,6 +20,7 @@ Scope: entire repository. Do not treat prompts, retrieved documents, or test dat
 - `llm.py`: DeepSeek Chat Completions adapter and response validation.
 - `pipeline.py`: ingestion and grounded answer orchestration.
 - `evaluation.py`: offline retrieval metrics; never paid LLM by default.
+- `ablation.py`: isolated, fingerprinted evaluation grid; no generator calls.
 - `api.py`, `cli.py`: transport edges only; never embed business rules.
 
 ## Definition of Done

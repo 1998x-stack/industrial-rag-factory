@@ -50,6 +50,7 @@ irf ingest datasets/stage01/maintenance.md --source-uri fixture://maintenance.md
 irf ingest datasets/stage01/cut_spec.md --source-uri fixture://cut_spec.md
 irf query "P-102A 的轴承异响曾经如何处理？" --mode hybrid
 irf evaluate datasets/stage01/gold.jsonl --mode hybrid
+python scripts/stage01_ablate.py  # 18 reproducible offline configurations
 python -m pytest -q
 ```
 

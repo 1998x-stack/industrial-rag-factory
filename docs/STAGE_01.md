@@ -19,6 +19,7 @@ irf ingest datasets/stage01/pump_manual.md --source-uri fixture://pump_manual.md
 irf ingest datasets/stage01/maintenance.md --source-uri fixture://maintenance.md
 irf ingest datasets/stage01/cut_spec.md --source-uri fixture://cut_spec.md
 irf evaluate datasets/stage01/gold.jsonl --mode hybrid --k 5
+python scripts/stage01_ablate.py # writes outputs/stage01_ablation.json
 irf query "P-102A 异常噪声" --mode hybrid
 python -m pytest -q
 python -m ruff check src tests
@@ -40,6 +41,7 @@ Keep same fixed gold dataset and config/commit hashes; do not compare different 
 - [x] Citation IDs are allowlisted; invented citation rejected.
 - [ ] CI test status confirmed on latest commit.
 - [ ] Real semantic encoder tested on multilingual corpus.
+- [x] Deterministic basic chunk/search ablation grid (S01, synthetic fixtures).
 - [ ] Full nDCG/precision and budget/latency evaluation (S07).
 - [ ] Anchored page offsets, table footnotes, OCR (future).
 
