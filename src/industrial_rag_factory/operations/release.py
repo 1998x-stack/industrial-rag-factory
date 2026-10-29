@@ -244,6 +244,7 @@ class ReleaseManager:
                             pipeline.close()
                         if fail_at=="after_ingest":
                             raise ReleaseError("Injected fault after index preparation")
+                        output_tmp.unlink(missing_ok=True)
                         self._copy_snapshot(tmp,output_tmp)
                         result_bytes=output_tmp.read_bytes()
                         sha=_sha(result_bytes)

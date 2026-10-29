@@ -57,8 +57,47 @@ def main() -> None:
         help="JSON array of bounded candidate claims; no evidence may be supplied")
     grounding_evaluate = sub.add_parser("grounding-evaluate")
     grounding_evaluate.add_argument("--gold",default="datasets/stage05/gold.jsonl")
+    ops= sub.add_parser("ops-stage",help="Stage offline immutable synthetic index")
+    ops.add_argument("--manifest",default="config/stage08_manifest.json")
+    ops.add_argument("--fail-at",choices=("after_ingest","before_catalog"),default=None)
+    pub=sub.add_parser("ops-publish")
+    pub.add_argument("version")
+    pub.add_argument("--expected-active",default=None,
+                     help="Expected active release, or omit for initial publication")
+    roll=sub.add_parser("ops-rollback")
+    roll.add_argument("version")
+    roll.add_argument("--expected-active",required=True)
+    oq=sub.add_parser("ops-query")
+    oq.add_argument("question")
+    osub=sub.add_parser("ops-status")
+    sub.add_parser("ops-history")
+    sub.add_parser("ops-readiness")
     args = parser.parse_args()
     settings = Settings.from_env()
+    if args.command.startswith("ops-"):
+        import os
+        from .operations import ReleaseManager, readiness_report
+        key=os.environ.get("IRF_OPS_HMAC_KEY","")
+        manager=ReleaseManager(
+            os.environ.get("IRF_OPS_ROOT","data/stage08"),
+            Path.cwd(),key,settings=settings)
+        if args.command=="ops-stage":
+            manifest=json.loads(Path(args.manifest).read_text(encoding="utf-8"))
+            payload=manager.stage(manifest,fail_at=args.fail_at)
+        elif args.command=="ops-publish":
+            payload=manager.publish(args.version,expected_active=args.expected_active)
+        elif args.command=="ops-rollback":
+            payload=manager.rollback(args.version,expected_active=args.expected_active)
+        elif args.command=="ops-query":
+            payload=manager.query(args.question)
+        elif args.command=="ops-status":
+            payload=manager.status()
+        elif args.command=="ops-history":
+            payload=manager.history()
+        else:
+            payload=readiness_report(manager.status())
+        print(json.dumps(payload,ensure_ascii=False,indent=2))
+        return
     if args.command == "serve":
         from .api import main as serve
         serve()
