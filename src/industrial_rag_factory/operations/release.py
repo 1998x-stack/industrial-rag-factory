@@ -396,3 +396,118 @@ class ReleaseManager:
                          if k in ("version","parent","source_count","changed_count",
                                   "removed_count","skipped_count","created_at","db_sha256")}
                         for x in rows]
+
+    def export_bundle(self, version: str, destination: str | Path) -> dict:
+        """Copy a signed local release into a bounded two-file archive."""
+        import zipfile
+
+        target=Path(destination)
+        with self._lock(shared=True):
+            with self._catalog() as db:
+                payload=self._verify(db,version)
+                source=self.root/"snapshots"/(version+".sqlite3")
+                if source.stat().st_size>32*1024*1024:
+                    raise ReleaseError("Backup size budget exceeded")
+                target.parent.mkdir(parents=True,exist_ok=True)
+                with zipfile.ZipFile(target,"x",compression=zipfile.ZIP_DEFLATED) as archive:
+                    archive.writestr("manifest.json",_canonical({
+                        "payload":payload,"signature":self._sign(payload)}))
+                    archive.write(source,arcname="snapshot.sqlite3")
+        return {"version":version,"status":"exported",
+                "archive_sha256":_sha(target.read_bytes())}
+
+    def import_bundle(self, archive: str | Path) -> dict:
+        """Restore a trusted-key signed local archive without auto-activating it."""
+        import zipfile
+
+        with self._lock():
+            with self._catalog() as db:
+                with zipfile.ZipFile(archive,"r") as package:
+                    entries=package.infolist()
+                    if (len(entries)!=2 or
+                        {x.filename for x in entries}!={"manifest.json","snapshot.sqlite3"} or
+                        any(x.file_size>32*1024*1024 for x in entries)):
+                        raise ReleaseError("Unsupported or oversized backup")
+                    envelope=json.loads(package.read("manifest.json"))
+                    if not isinstance(envelope,dict) or set(envelope)!={"payload","signature"}:
+                        raise ReleaseError("Malformed bundle metadata")
+                    payload=envelope["payload"]
+                    sig=envelope["signature"]
+                    if (not isinstance(payload,dict) or not isinstance(sig,str) or
+                        not hmac.compare_digest(sig,self._sign(payload))):
+                        raise ReleaseError("Backup lineage signature mismatch")
+                    version=payload.get("version")
+                    if (not isinstance(version,str) or len(version)!=24 or
+                        any(c not in "0123456789abcdef" for c in version)):
+                        raise ReleaseError("Invalid backup release ID")
+                    blob=package.read("snapshot.sqlite3")
+                    if _sha(blob)!=payload.get("db_sha256"):
+                        raise ReleaseError("Backup snapshot digest mismatch")
+                if db.execute("SELECT 1 FROM releases WHERE version=?",(version,)).fetchone():
+                    self._verify(db,version)
+                    return {"status":"already_imported","version":version}
+                target=self.root/"snapshots"/(version+".sqlite3")
+                if target.exists() or target.is_symlink():
+                    raise ReleaseError("Unregistered backup path collision")
+                temp=target.with_suffix(".restoring")
+                if temp.exists() or temp.is_symlink():
+                    raise ReleaseError("Restoration temporary path collision")
+                written=False
+                try:
+                    with temp.open("xb") as handle:
+                        handle.write(blob)
+                        handle.flush()
+                        os.fsync(handle.fileno())
+                    with sqlite3.connect(_db_uri(temp),uri=True) as check:
+                        if check.execute("PRAGMA quick_check").fetchone()[0]!="ok":
+                            raise ReleaseError("Corrupt SQLite backup")
+                    os.replace(temp,target)
+                    written=True
+                    db.execute("INSERT INTO releases VALUES(?,?,?,?)",(
+                        version,json.dumps(payload,sort_keys=True),sig,
+                        int(payload["created_at"])))
+                    return {"status":"imported_inactive","version":version}
+                except BaseException:
+                    if written:
+                        target.unlink(missing_ok=True)
+                    raise
+                finally:
+                    temp.unlink(missing_ok=True)
+
+    def recover(self, version: str, *, expected_active: str | None) -> dict:
+        """Explicit compare-and-swap activation of an imported verified version."""
+        with self._lock():
+            with self._catalog() as db:
+                current=self._active(db)
+                if current!=expected_active:
+                    raise ReleaseError("CAS rejected: active changed before recovery")
+                self._verify(db,version)
+                db.execute("UPDATE active SET version=? WHERE singleton=1",(version,))
+                return {"status":"recovered","active":version,"previous":current,
+                        "local_demo_only":True}
+
+    def prune(self, *, keep: int = 3) -> dict:
+        """Delete only old inactive release snapshots, preserving active lineage parent."""
+        if type(keep) is not int or not 2<=keep<=100:
+            raise ValueError("Keep must be within [2,100]")
+        with self._lock():
+            with self._catalog() as db:
+                ids=[r["version"] for r in db.execute(
+                    "SELECT version FROM releases ORDER BY rowid DESC")]
+                current=self._active(db)
+                protected=set(ids[:keep])
+                if current is not None:
+                    protected.add(current)
+                    parent=self._row(db,current).get("parent")
+                    if parent:
+                        protected.add(parent)
+                removed=[]
+                for version in ids:
+                    if version in protected:
+                        continue
+                    self._verify(db,version)
+                    (self.root/"snapshots"/(version+".sqlite3")).unlink()
+                    db.execute("DELETE FROM releases WHERE version=?",(version,))
+                    removed.append(version)
+                return {"status":"pruned","removed_versions":removed,
+                        "retained":len(ids)-len(removed)}
