@@ -1,9 +1,14 @@
-"""Allowlisted read-only tools; server controls identity context and service credentials."""
+"""Allowlisted read-only tools with worker-local DB connections.
+
+The services accessing SQLite are created/closed inside the worker thread; a
+SQLite connection must never cross thread boundaries. Each invocation uses a
+bounded, independent local research fixture, with server-selected access scope.
+"""
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Callable
+from typing import Callable
 
 from industrial_rag_factory.config import Settings
 from industrial_rag_factory.multisource.contracts import Interval
@@ -61,20 +66,21 @@ class ToolRegistry:
             self._on_close()
 
 
-def build_tool_registry(settings: Settings | None = None, root: str | Path = ".",
-                        document_pipeline: Pipeline | None = None) -> ToolRegistry:
+def build_tool_registry(settings: Settings | None = None, root: str | Path = ".") -> ToolRegistry:
     settings = settings or Settings.from_env()
     root = Path(root)
+    # Graph reads do not use a shared database cursor.
     semantic = SemanticService.from_defaults(root)
-    multi = MultiSourceService.from_defaults(root)
-    owns_pipeline = document_pipeline is None
-    pipeline = document_pipeline or Pipeline(settings)
 
     def document_search(args: dict, context: RunContext) -> dict:
-        hits = pipeline.retriever.search(args["question"],tenant=context.tenant_id,
-            groups=context.groups,mode=args.get("mode","hybrid"),top_k=args.get("top_k",5))
-        return {"status":"retrieved" if hits else "no_accessible_evidence",
-                "hits":[h.to_dict() for h in hits]}
+        pipeline = Pipeline(settings)
+        try:
+            hits = pipeline.retriever.search(args["question"],tenant=context.tenant_id,
+                groups=context.groups,mode=args.get("mode","hybrid"),top_k=args.get("top_k",5))
+            return {"status":"retrieved" if hits else "no_accessible_evidence",
+                    "hits":[h.to_dict() for h in hits]}
+        finally:
+            pipeline.close()
 
     def entity_resolve(args: dict, context: RunContext) -> dict:
         return semantic.resolve(args["external_id"],tenant_id=context.tenant_id,
@@ -85,24 +91,36 @@ def build_tool_registry(settings: Settings | None = None, root: str | Path = "."
             groups=context.groups,at_time=args.get("at_time"))
 
     def mes_by_batch(args: dict, context: RunContext) -> dict:
-        records = multi.mes.by_batch(args["batch_id"],tenant_id=context.tenant_id,
-                                     groups=context.groups,max_rows=20)
-        return {"status":"found" if records else "no_accessible_execution",
-                "records":[asdict(row) for row in records]}
+        multi = MultiSourceService.from_defaults(root)
+        try:
+            records = multi.mes.by_batch(args["batch_id"],tenant_id=context.tenant_id,
+                                        groups=context.groups,max_rows=20)
+            return {"status":"found" if records else "no_accessible_execution",
+                    "records":[asdict(row) for row in records]}
+        finally:
+            multi.close()
 
     def historian_read(args: dict, context: RunContext) -> dict:
-        interval=Interval(args["start"],args["end"])
-        samples=multi.historian.read(set(args["point_ids"]),interval,
-                        tenant_id=context.tenant_id,groups=context.groups,max_samples=100)
-        return {"status":"found" if samples else "no_accessible_samples","samples":[
-            {"sample_id":s.sample_id,"point_id":s.point_id,"timestamp":s.timestamp,
-             "value":s.value,"kind":s.kind,"unit":s.unit,"quality":s.quality,
-             "source_uri":s.source_uri} for s in samples]}
+        multi = MultiSourceService.from_defaults(root)
+        try:
+            interval=Interval(args["start"],args["end"])
+            samples=multi.historian.read(set(args["point_ids"]),interval,
+                            tenant_id=context.tenant_id,groups=context.groups,max_samples=100)
+            return {"status":"found" if samples else "no_accessible_samples","samples":[
+                {"sample_id":s.sample_id,"point_id":s.point_id,"timestamp":s.timestamp,
+                 "value":s.value,"kind":s.kind,"unit":s.unit,"quality":s.quality,
+                 "source_uri":s.source_uri} for s in samples]}
+        finally:
+            multi.close()
 
     def batch_assess(args: dict, context: RunContext) -> dict:
-        return multi.assess_batch(args["batch_id"],tenant_id=context.tenant_id,
-            groups=context.groups,kind=args.get("kind","vibration_velocity"),
-            spacing_seconds=args.get("spacing_seconds",600))
+        multi = MultiSourceService.from_defaults(root)
+        try:
+            return multi.assess_batch(args["batch_id"],tenant_id=context.tenant_id,
+                groups=context.groups,kind=args.get("kind","vibration_velocity"),
+                spacing_seconds=args.get("spacing_seconds",600))
+        finally:
+            multi.close()
 
     tools = [
         ReadOnlyTool("document.search",document_search),
@@ -112,10 +130,4 @@ def build_tool_registry(settings: Settings | None = None, root: str | Path = "."
         ReadOnlyTool("historian.read",historian_read),
         ReadOnlyTool("batch.assess",batch_assess),
     ]
-
-    def close():
-        multi.close()
-        if owns_pipeline:
-            pipeline.close()
-
-    return ToolRegistry(tools,on_close=close)
+    return ToolRegistry(tools)

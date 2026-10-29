@@ -128,7 +128,8 @@ class DAGRunner:
                         if (attempt>=step.max_retries or
                                 circuit[step.tool]>=self.policy.circuit_breaker_after):
                             break
-                    except (ValueError,TypeError,KeyError,RuntimeError):
+                    except Exception:
+                        # Do not return internal tool exceptions, paths or secrets to callers.
                         error="tool_error"
                         break
             except (PlanValidationError,ValueError,TypeError,KeyError):
