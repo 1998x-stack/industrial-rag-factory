@@ -206,3 +206,19 @@ claim-level support checks; this stage does not assert factual verification.
   confidence intervals and timing boundaries. Do not hide small sample sizes.
 - Keep prior Stage 06 production deny decisions intact; an offline public
   benchmark cannot authorize a real factory installation.
+
+## Stage 12 performance and failure-safe contracts
+
+- Never share one sqlite3 connection among benchmark workers. Every worker
+  opens an independently pinned mode=ro connection with query_only=ON.
+- LOAD / QPS is *closed-loop completed requests / observed wall-clock*,
+  not an open-loop capacity number or real network benchmark.
+- Benchmark stress records are created ONLY from TRAIN question text and
+  marked as synthetic distractors. No TEST prompt or answer is introduced.
+- Score only answerable case MRR in paired Bootstrap; keep abstention a
+  separate class and never label unjudged docs as true negatives.
+- Report p50/p95/p99 with sample size, CPU/environment limits and cost
+  boundaries. No hard latency threshold based on CI runner variability.
+- Rerank-depth comparisons rerun ACTUAL pretrained models for each candidate
+  count, using the same dataset, document truncation, and model revisions.
+- A green load experiment does not grant Stage 06 OT or production access.

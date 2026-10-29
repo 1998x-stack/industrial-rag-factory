@@ -241,3 +241,21 @@ source-group bootstrap deltas, and a clear wall-clock timing scope for
 indexing, embedding and query. It is not an LLM QA entailment test, not an
 OT evaluation, and not evidence that threshold scores generalize beyond
 this tiny public corpus.
+
+## Stage 12: closed-loop robustness and actual model-depth contrast
+
+An exact pinned TechQA dataset snapshot is indexed through Stage 01 in a
+temporary independent SQLite store. Closed-loop concurrent workers each
+open their OWN read-only connection and run FTS5, probing cross-tenant and
+cross-group denial. Baseline is compared with question-conditioned synthetic
+lexical decoys derived **only from TRAIN**; TEST evaluation uses only
+answerable reference cases for paired source-group MRR bootstrap.
+
+Local measurements include completed QPS, P50/P95/P99 wall-clock query
+duration, index size/time and process peak RSS. These metrics exclude network
+serving, arrival-rate control and production SLO qualification.
+
+In a distinct real-pretrained job, the S11 comparison is reexecuted for
+reranker candidate depth 4, 8 and 12 under the same public snapshot/model
+commit identity. Actual CPU runtime—not a simulated ranking proxy—determines
+observed p95 for each depth. Tiny public results remain exploratory.
