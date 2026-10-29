@@ -8,7 +8,8 @@ import json
 def render_html(report: dict) -> str:
     if report.get("stage")!="S07":
         raise ValueError("Only S07 report contract supported")
-    escape=lambda x:html.escape(str(x),quote=True)
+    def escape(value: object) -> str:
+        return html.escape(str(value),quote=True)
     summary=report["summary"]
     champ=report["retrieval"]["champion_dev_selected"]
     ci=report["retrieval"]["champion_test_ci"]["mrr_at_k"]
