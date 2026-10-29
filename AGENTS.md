@@ -184,3 +184,9 @@ claim-level support checks; this stage does not assert factual verification.
   safety evidence.
 - Source corpus and evaluation gold remain separate. Extra unjudged
   documents are not trustworthy negative relevance labels.
+
+- Stage 10 pretrained multilingual model downloads must be explicit, use
+  the exact allowlisted public model repo and a resolved full commit SHA.
+  Avoid remote model code, unpinned revisions and automatic downloads in CI.
+- Record model/backend and separate real pretrained metrics from lexical
+  baseline; do not claim unexecuted embeddings were benchmarked.

@@ -67,3 +67,29 @@ several larger and independently labeled corpora. Add semantic/rerank
 calibration, multi-domain class imbalance and bootstrapped uncertainty
 before claiming significant model improvements. S06 real IAM/OT barriers
 remain required for any production application.
+
+## Opt-in true semantic embedding comparison
+
+The existing S01 Pipeline already supports `sentence-transformers`; S10
+adds an independently pinned model downloader for the fixed, public
+`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` repository.
+This is an Apache-2.0-labelled pretrained multilingual 384-D encoder.
+
+```bash
+pip install -e '.[huggingface,dense]'
+python scripts/stage10_techqa.py --snapshot data/hf/techqa.json \
+  --multilingual --mode dense --model-revision main
+python scripts/stage10_techqa.py --snapshot data/hf/techqa.json \
+  --multilingual --mode hybrid --model-revision main
+```
+
+The execution resolves and records the exact upstream model commit before
+downloading to the local Hugging Face cache; the CI production lane retains
+only sparse retrieval without a network model download. Compare reports by
+query IDs and model revisions, not by indexing-order seeds. The CPU model
+download may be hundreds of MB and inference may be slow; both operations
+require an explicit CLI flag and optional dependency installation.
+
+This path is **implemented but not claimed to have been run** as part of
+the normal CI. Real semantic retrieval metrics need explicit execution
+and head-to-head analysis; no learned reranker is yet integrated.

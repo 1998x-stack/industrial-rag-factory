@@ -401,3 +401,20 @@ The dataset measures IT technical support, **not physical plant failures**.
 A threshold tuned on one tiny TechQA corpus is NOT deployment confidence
 calibration or a substitute for fact entailment. Production OT/IAM approval
 remains blocked. See `docs/STAGE_10.md`.
+
+### Optional pinned multilingual semantic embedding experiment
+
+```bash
+pip install -e '.[huggingface,dense]'
+python scripts/stage10_techqa.py --snapshot data/hf/techqa.json \
+  --multilingual --mode dense --model-revision main
+```
+
+`--multilingual` explicitly resolves a full Hugging Face model revision,
+downloads the fixed Apache-2.0-labelled
+`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` model
+(which can require considerable RAM, network bandwidth and CPU time),
+and indexes the same public corpus with actual pretrained 384-D vectors.
+Its full model SHA is recorded in the report. Default S10 CI does not
+download or benchmark this model, so **do not claim measured multilingual
+quality improvements** until an explicit run has been completed.

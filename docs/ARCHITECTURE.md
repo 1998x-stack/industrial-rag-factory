@@ -218,3 +218,9 @@ DEV-only threshold selection -> frozen TEST confusion, selective coverage,
 false-answer rate and source MRR. No model is shown gold `is_impossible`
 labels; the score is not an independently calibrated confidence probability.
 The data concern public IT technical support, not live industrial data.
+
+The optional S10 multilingual variant resolves a fixed public model to a full
+upstream commit, downloads that snapshot only with explicit CLI opt-in, and
+configures the existing S01 Pipeline `sentence-transformers` encoder.
+It reports actual backend and full model provenance; the default live
+benchmark still uses lexical FTS and does not fetch model weights.
