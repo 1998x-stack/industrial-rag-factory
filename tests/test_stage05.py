@@ -12,7 +12,7 @@ from industrial_rag_factory.grounding.contracts import (
 )
 from industrial_rag_factory.grounding.evaluation import evaluate_claims
 from industrial_rag_factory.grounding.service import GroundingService
-from industrial_rag_factory.grounding.verifier import audit_bundle, verify_claims
+from industrial_rag_factory.grounding.verifier import verify_claims
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -226,3 +226,19 @@ def test_flask_grounding_endpoint_scoped(tmp_path,monkeypatch):
             "predicate":"batch_exceedance_count","expected":0,
         }]})
     assert check.status_code==200 and check.json["verification"]["status"]=="refuted"
+
+
+def test_claim_graph_has_explicit_support_and_refute_edges(service):
+    _,bundle=first(service)
+    accepted=Claim("accepted","B-104","batch_exceedance_count",2)
+    rejected=Claim("rejected","B-104","batch_exceedance_count",0)
+    output=verify_claims([accepted,rejected],[bundle])
+    graph=output["claim_graph"]
+    assert len(graph["claim_nodes"])==2
+    assert graph["evidence_nodes"]
+    assert any(edge["claim_id"]=="accepted" and edge["relationship"]=="supports"
+               for edge in graph["edges"])
+    assert any(edge["claim_id"]=="rejected" and edge["relationship"]=="refutes"
+               for edge in graph["edges"])
+    assert all(edge["evidence_id"] in {e["id"] for e in graph["evidence_nodes"]}
+               for edge in graph["edges"])

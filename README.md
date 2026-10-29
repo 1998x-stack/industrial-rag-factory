@@ -182,3 +182,39 @@ only, without production identity authentication.
 Soft thread timeouts return an error but cannot kill a running task; all
 Stage 04 tools are read-only. Execution success is NOT claim entailment
 or evidence authenticity. See docs/STAGE_04.md.
+
+## Stage 05 — EvidenceBundle / ClaimGraph & deterministic verification
+
+Stage 05 provides a **read-only claim-verification layer** over Stage 04
+trusted typed execution and Stage 03 sourced industrial measurements:
+
+    Batch ID -> trusted Stage 04 MES/batch-assess DAG -> EvidenceBundle
+       -> structured provenance and numeric checks -> typed ClaimGraph
+       -> supported / refuted / conflicting / insufficient_evidence + abstain
+
+It does NOT use a model to decide truth. The verifier independently recomputes
+each synthetic measurement's threshold flag against the unique approved
+fixture specification (Decimal and physical unit checks). It also checks
+MES batch/equipment identity, required source kinds, sample counts and
+citation allowlists. Document passages alone cannot prove numeric limits.
+
+Try the offline factory:
+
+    irf grounding-verify B-104
+    irf grounding-verify B-105
+    irf grounding-verify B-999
+    irf grounding-evaluate
+    python scripts/stage05_evaluate.py
+    pytest -q
+
+Submit a bounded candidate claim to check rather than automatically inferring
+one from the observation:
+
+    irf grounding-verify B-104 --claims-json '[{"claim_id":"wrong","subject":"B-104","predicate":"batch_exceedance_count","expected":0}]'
+
+Local Flask (development only): POST /v1/grounding/verify receives only
+batch_id and optional typed claims. **Never accept client-supplied evidence or
+authorization context.** A rejected claim is reported as refuted, not rewritten
+as true; unsupported root-cause and product-conformity statements abstain.
+
+See docs/STAGE_05.md for the data contracts and known limitations.

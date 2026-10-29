@@ -97,3 +97,24 @@ killable worker process isolation, IAM and full auditing for production.
 
 A completed execution provides structured facts and provenance, NOT an
 authoritative natural-language diagnostic claim.
+
+## Stage 05: evidence qualification and typed claim graph
+
+A trusted server-owned Batch ID enters a deterministic Stage 04 QueryPlan
+with mes.by_batch and batch.assess. The result is normalized to a bounded
+EvidenceBundle with canonical batch ID, equipment, evidence source/record IDs,
+measurement values, timestamps and explicit quality limitations.
+
+The verifier checks necessary provenance categories (MES, identity mapping,
+RDF relation, approved specification, historian measurement), numeric
+consistency using Decimal and unit-kind compatibility, measurement-count
+consistency and exact citation IDs. Ambiguous/conflicting evidence returns
+conflicting; evidence gaps and unsupported causal or product-quality claims
+return insufficient_evidence. Only a fully supported typed claim avoids
+abstention.
+
+ClaimGraph output contains typed claim nodes, sourced evidence nodes, and
+supporting/refuting edges. This is **not** a complete natural-language
+entailment model; it deliberately supports only a small set of typed synthetic
+batch predicates. It does not verify cryptographic source authenticity or
+independently acquire source permissions; Stage 06 addresses production IAM.

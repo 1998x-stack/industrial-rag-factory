@@ -78,3 +78,20 @@ transient idempotent operations may retry once within budget.
 Trace should contain step IDs, tool names, states, generic error codes and
 timings, not raw prompts, secrets or tool parameters. Stage 05 handles
 claim-level support checks; this stage does not assert factual verification.
+
+## Stage 05 evidence and claim safety rules
+
+- Construct evidence only from server-executed, trusted read-only query tools;
+  never treat client-supplied JSON as an authoritative evidence bundle.
+- Every typed claim must have a canonical subject ID and allowlisted predicate;
+  reject arbitrary text, new predicates, unknown citations or tenant overrides.
+- A citation is a pointer, not a proof. Keep support/refute/conflict decisions
+  separate from source provenance, applicability and authenticity.
+- Recompute numeric sample flags against the applicable structured fixture spec;
+  never allow document text to override structured limits.
+- Any missing sample, scope, identity, specification, or incomplete DAG must
+  fail closed to insufficient_evidence. Contradictions are explicit conflicts.
+- Never infer fault cause, repair action, product conformance or safe equipment
+  operation from Stage 03 threshold observations.
+- Keep Stage 05 evaluation offline, fixture-hashed, and separate from paid LLM
+  quality measurement. Stage 06 is required for genuine enterprise IAM.

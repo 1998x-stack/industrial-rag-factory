@@ -43,3 +43,15 @@ mandatory: model messages do not grant arbitrary tools or permission.
 
 The CI suite tests DeepSeekPlanner through a mock OpenAI-compatible client;
 real API model quality, latency and cost are not measured in Stage 04.
+
+## Stage 05 PR-07 and PR-08: structured verdicts, not model trust
+
+The Stage 05 verification decision is deterministic code, not a new model
+instruction. The existing SYSTEM_EVIDENCE_V1 and SYSTEM_ABSTAIN_V1 are
+non-authoritative templates for future candidate extraction/triage only.
+
+Stages 04 and 05 cannot allow an LLM to declare a source authentic, a
+specification approved, a numeric threshold valid, or an unknown claim true.
+Prompt candidates require strict schema validation followed by independent
+source checks. The current Stage 05 uses manually supplied or deterministic
+bounded batch claims, and does not measure paid DeepSeek entailment.
