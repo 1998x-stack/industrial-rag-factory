@@ -153,6 +153,33 @@ def create_app(settings: Settings | None = None, pipeline: Pipeline | None = Non
             if agent is not None:
                 agent.close()
 
+    @app.post("/v1/grounding/verify")
+    def grounding_verify():
+        body=request.get_json(silent=True)
+        if not isinstance(body,dict) or not {"batch_id"} <= set(body) or (
+            set(body)-{"batch_id","claims"}
+        ):
+            return jsonify({"error":"Only batch_id and optional claims are accepted"}),400
+        from .grounding.contracts import Claim
+        from .grounding.service import GroundingService
+        grounding=None
+        try:
+            batch_id=body["batch_id"]
+            raw=body.get("claims")
+            if raw is not None and (not isinstance(raw,list) or not 1<=len(raw)<=50):
+                raise ValueError("claims must contain 1..50 typed statements")
+            claims=None if raw is None else [Claim.from_dict(item) for item in raw]
+            grounding=GroundingService(settings)
+            result=grounding.verify_batch(batch_id,claims)
+            return jsonify(result),200
+        except (ValueError,TypeError,KeyError):
+            return jsonify({"error":"invalid_claim_or_batch"}),400
+        except RuntimeError:
+            return jsonify({"error":"verification_tool_unavailable"}),503
+        finally:
+            if grounding is not None:
+                grounding.close()
+
     return app
 
 

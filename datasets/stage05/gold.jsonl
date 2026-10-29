@@ -1,0 +1,14 @@
+{"id":"S05-01","batch_id":"B-104","predicate":"batch_exceedance_count","expected":2,"expected_status":"supported"}
+{"id":"S05-02","batch_id":"B-104","predicate":"batch_exceedance_count","expected":0,"expected_status":"refuted"}
+{"id":"S05-03","batch_id":"B-104","predicate":"batch_valid_sample_count","expected":4,"expected_status":"supported"}
+{"id":"S05-04","batch_id":"B-104","predicate":"batch_has_exceedance","expected":true,"expected_status":"supported"}
+{"id":"S05-05","batch_id":"B-104","predicate":"batch_within_observed_limits","expected":true,"expected_status":"refuted"}
+{"id":"S05-06","batch_id":"B-104","predicate":"batch_equipment","expected":"CUT-04","expected_status":"refuted"}
+{"id":"S05-07","batch_id":"B-104","predicate":"equipment_fault_cause","expected":"bearing failure","expected_status":"insufficient_evidence"}
+{"id":"S05-08","batch_id":"B-104","predicate":"batch_product_conformity","expected":false,"expected_status":"insufficient_evidence"}
+{"id":"S05-09","batch_id":"B-104","predicate":"batch_has_exceedance","expected":true,"citation_ids":["doc:invented"],"expected_status":"insufficient_evidence"}
+{"id":"S05-10","batch_id":"B-105","predicate":"batch_exceedance_count","expected":0,"expected_status":"supported"}
+{"id":"S05-11","batch_id":"B-105","predicate":"batch_within_observed_limits","expected":true,"expected_status":"supported"}
+{"id":"S05-12","batch_id":"B-105","predicate":"batch_equipment","expected":"CUT-04","expected_status":"supported"}
+{"id":"S05-13","batch_id":"B-999","predicate":"batch_has_exceedance","expected":false,"expected_status":"insufficient_evidence"}
+{"id":"S05-14","batch_id":"B-999","predicate":"batch_equipment","expected":"CUT-03","expected_status":"insufficient_evidence"}

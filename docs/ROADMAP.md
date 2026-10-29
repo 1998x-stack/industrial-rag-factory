@@ -54,7 +54,7 @@ Stages are **sequential acceptance gates**, not claims that future components al
 - S04-T04 retries only for idempotent operations; circuit breaker and fail closed.
 - S04-T05 planner regression and multi-tool traces.
 
-### S05
+### S05 [typed claim and provenance verifier implemented; see docs/STAGE_05.md]
 - S05-T01 EvidenceBundle and stable citations with exact offsets.
 - S05-T02 ClaimGraph and supported/refuted/conflicting/insufficient state machine.
 - S05-T03 deterministic rules for numeric and process questions.

@@ -51,6 +51,12 @@ def main() -> None:
     agent_plan.add_argument("question")
     agent_plan.add_argument("--planner",choices=("rules","deepseek"),default=None)
     sub.add_parser("agent-evaluate")
+    grounding_verify = sub.add_parser("grounding-verify")
+    grounding_verify.add_argument("batch_id")
+    grounding_verify.add_argument("--claims-json",default=None,
+        help="JSON array of bounded candidate claims; no evidence may be supplied")
+    grounding_evaluate = sub.add_parser("grounding-evaluate")
+    grounding_evaluate.add_argument("--gold",default="datasets/stage05/gold.jsonl")
     args = parser.parse_args()
     settings = Settings.from_env()
     if args.command == "serve":
@@ -110,6 +116,23 @@ def main() -> None:
                 payload = agent.plan(args.question) if args.command == "agent-plan" else agent.query(args.question)
             finally:
                 agent.close()
+        print(json.dumps(payload,ensure_ascii=False,indent=2))
+        return
+    if args.command.startswith("grounding-"):
+        from .grounding.contracts import Claim
+        from .grounding.evaluation import evaluate_claims
+        from .grounding.service import GroundingService
+        grounding=GroundingService(settings)
+        try:
+            if args.command == "grounding-verify":
+                claims = None if args.claims_json is None else [
+                    Claim.from_dict(item) for item in json.loads(args.claims_json)
+                ]
+                payload=grounding.verify_batch(args.batch_id,claims)
+            else:
+                payload=evaluate_claims(grounding,args.gold)
+        finally:
+            grounding.close()
         print(json.dumps(payload,ensure_ascii=False,indent=2))
         return
     pipeline = Pipeline(settings)
