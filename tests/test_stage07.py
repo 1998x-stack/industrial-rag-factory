@@ -32,7 +32,7 @@ def test_group_holdout_and_source_splits():
             for s in ("train","dev","test")}
     assert all(len(groups[s])==9 for s in groups)
     assert all(groups[a].isdisjoint(groups[b]) for a,b in (
-        ("train","dev"),("dev","test"),("train","test"))
+        ("train","dev"),("dev","test"),("train","test")))
 
 
 @pytest.mark.parametrize("change",[
