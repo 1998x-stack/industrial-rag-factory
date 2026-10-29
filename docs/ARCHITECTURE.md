@@ -57,3 +57,23 @@ check structural constraints. `competency.jsonl` gives independent 36-case expec
 - The inferred meaning of absence is explicitly *no verified graph path*, not proof of absence.
 - Data is synthetic and tenants/groups are configured by the developer, not authenticated.
 - Graph-to-LLM tool routing and numerical calculations remain for S03–S05.
+
+## Stage 03: bounded multi-source lane
+
+The Stage 03 evidence path uses the same authorized scope (tenant_id and
+access_groups) across every source. MES SQL returns approved fixture process
+records. EntityResolver checks ERP external IDs at the interval boundaries.
+The Stage 02 graph verifies the execution's batch, equipment, work order,
+specification and sensor mapping, retaining relation source IDs. Historian
+samples are checked against the map at their *own* timestamps. Specification
+applicability includes equipment, mode, quantity kind and full validity interval.
+
+Quantity conversion uses Decimal to normalize mm/s and m/s (plus simple
+temperature units), with a small explicit QUDT-linked registry. It is not
+general dimensional reasoning. Strict expected-grid coverage is required to
+claim within-observed-limits. No time-weighted duration or probabilistic
+anomaly diagnosis is attempted.
+
+Outputs are structured status, evidence and limitations. Optional Stage 01
+retriever adds document snippets as context-only evidence. DeepSeek generation
+is NOT used to execute SQL or to validate the scientific content of claims.
