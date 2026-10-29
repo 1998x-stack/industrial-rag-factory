@@ -224,3 +224,20 @@ upstream commit, downloads that snapshot only with explicit CLI opt-in, and
 configures the existing S01 Pipeline `sentence-transformers` encoder.
 It reports actual backend and full model provenance; the default live
 benchmark still uses lexical FTS and does not fetch model weights.
+
+## S11: source-aware pretrained retrieval comparison
+
+The already pinned public TechQA normalization is reused unchanged. Stage 01
+indexing parses/chunks an identical, bounded sample of documents to a
+temporary tenant. Sparse uses existing FTS5; Dense encodes the same chunks
+through a pinned public multilingual model; Hybrid combines ranks with
+RRF(60). A fixed English CrossEncoder predicts candidate text pair
+scores for only the RRF top 12. Document-level dedup happens BEFORE
+Hit/MRR calculation. The labels and gold source URIs are used only after
+ranking, and DEV alone chooses separate decision thresholds for each lane.
+
+The output includes source/provenance hashes, per-query ranks, case-aligned
+source-group bootstrap deltas, and a clear wall-clock timing scope for
+indexing, embedding and query. It is not an LLM QA entailment test, not an
+OT evaluation, and not evidence that threshold scores generalize beyond
+this tiny public corpus.

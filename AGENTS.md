@@ -190,3 +190,19 @@ claim-level support checks; this stage does not assert factual verification.
   Avoid remote model code, unpinned revisions and automatic downloads in CI.
 - Record model/backend and separate real pretrained metrics from lexical
   baseline; do not claim unexecuted embeddings were benchmarked.
+
+## Stage 11 experimental safeguards
+
+- No model downloaded without explicit --pretrained or controlled opt-in CI.
+- Resolve and record full HF commit SHA for allowlisted public encoder and
+  CrossEncoder, and never enable remote model Python code.
+- Run all rankers on the identical indexed document corpus and per-case
+  split; do not feed gold is_impossible or reference context URIs into ranking.
+- Tune per-lane decision score thresholds on DEV only. Never use TEST labels
+  for cutoff selection or choosing the winning pipeline.
+- Only rerank bounded accessible candidates. The scores of different lanes
+  are not calibrated probabilities and must never be compared directly.
+- Report TEST Hit/MRR and false-answer rate together, plus grouped paired
+  confidence intervals and timing boundaries. Do not hide small sample sizes.
+- Keep prior Stage 06 production deny decisions intact; an offline public
+  benchmark cannot authorize a real factory installation.
