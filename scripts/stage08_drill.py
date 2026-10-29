@@ -36,7 +36,7 @@ with tempfile.TemporaryDirectory(prefix="irf-stage08-drill-") as folder:
     verify("detached_stage",mgr.status()["active"] is None)
     verify("signed_snapshot",bool(initial["version"]))
     mgr.publish(initial["version"],expected_active=None)
-    verify("first_publish_query",mgr.query("bearing maintenance")[
+    verify("first_publish_query",mgr.query("轴承")[
         "status"]=="retrieved_not_verified")
     edit=work/"datasets/stage01/maintenance.md"
     edit.write_text("# Synthetic maintenance\n\nStage08DrillNewMarker892",
@@ -74,7 +74,7 @@ with tempfile.TemporaryDirectory(prefix="irf-stage08-drill-") as folder:
            and restored.status()["active"] is None)
     recovered=restored.recover(initial["version"],expected_active=None)
     verify("restored_index_queryable",recovered["status"]=="recovered"
-           and restored.query("bearing maintenance")["status"]=="retrieved_not_verified")
+           and restored.query("轴承")["status"]=="retrieved_not_verified")
     status=mgr.status()
     gate=readiness_report(status,target="production")
     verify("readiness_no_production_approval",gate["local_demo_ready"] and

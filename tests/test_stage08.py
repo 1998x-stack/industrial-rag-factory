@@ -38,7 +38,7 @@ def test_stage_publish_query_rollback(release):
     first=m.publish(initial["version"],expected_active=None)
     assert first["status"]=="published"
     assert m.status()["active_verified"]
-    assert m.query("bearing maintenance")["status"]=="retrieved_not_verified"
+    assert m.query("轴承")["status"]=="retrieved_not_verified"
     content=ws/"datasets/stage01/maintenance.md"
     content.write_text("# Maintenance\n\nStage08UniqueMarkerXY991 device documentation.",
                        encoding="utf-8")
@@ -203,7 +203,7 @@ def test_export_restore_bundle_roundtrip_and_explicit_recovery(release,tmp_path)
     assert restored.status()["active"] is None
     recovered=restored.recover(staged["version"],expected_active=None)
     assert recovered["status"]=="recovered"
-    assert restored.query("bearing maintenance")["status"]=="retrieved_not_verified"
+    assert restored.query("轴承")["status"]=="retrieved_not_verified"
     assert restored.status()["active_verified"]
     assert restored.import_bundle(backup)["status"]=="already_imported"
 
