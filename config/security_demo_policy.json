@@ -1,0 +1,62 @@
+{
+  "version": "stage06-v1",
+  "revision": 1,
+  "principals": {
+    "analyst": {
+      "active": true,
+      "tenant_id": "demo",
+      "groups": [
+        "demo-readers"
+      ],
+      "generation": 1,
+      "allowed_tools": [
+        "document.search",
+        "entity.resolve",
+        "graph.traverse",
+        "mes.by_batch",
+        "historian.read",
+        "batch.assess"
+      ],
+      "source_prefixes": [
+        "fixture://",
+        "file://"
+      ],
+      "redact_fields": [
+        "note"
+      ]
+    },
+    "limited": {
+      "active": true,
+      "tenant_id": "demo",
+      "groups": [
+        "demo-readers"
+      ],
+      "generation": 1,
+      "allowed_tools": [
+        "mes.by_batch"
+      ],
+      "source_prefixes": [
+        "fixture://mes/"
+      ],
+      "redact_fields": [
+        "source_uri",
+        "note"
+      ]
+    },
+    "revoked": {
+      "active": false,
+      "tenant_id": "demo",
+      "groups": [
+        "demo-readers"
+      ],
+      "generation": 1,
+      "allowed_tools": [
+        "mes.by_batch"
+      ],
+      "source_prefixes": [
+        "fixture://mes/"
+      ],
+      "redact_fields": []
+    }
+  }
+}

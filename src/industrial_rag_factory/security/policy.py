@@ -22,6 +22,7 @@ class Principal:
     groups: tuple[str, ...]
     allowed_tools: tuple[str, ...]
     source_prefixes: tuple[str, ...]
+    redact_fields: tuple[str, ...]
     generation: int
     policy_revision: int
 
@@ -58,16 +59,19 @@ class PolicyStore:
         groups=row.get("groups")
         tools=row.get("allowed_tools")
         prefixes=row.get("source_prefixes")
+        redactions=row.get("redact_fields",[])
         if (not isinstance(groups,list) or not groups or
             not all(isinstance(x,str) and IDENT.fullmatch(x) for x in groups) or
             not isinstance(tools,list) or not tools or
             not all(isinstance(x,str) and x in TOOLS for x in tools) or
             not isinstance(prefixes,list) or not prefixes or
             not all(isinstance(x,str) and (x.startswith("fixture://") or x.startswith("file://"))
-                    and len(x)<200 for x in prefixes)):
+                    and len(x)<200 for x in prefixes) or
+            not isinstance(redactions,list) or
+            not all(x in ("note","text","source_uri","value") for x in redactions)):
             raise AccessDenied("Invalid principal authorization")
         return Principal(subject,row["tenant_id"],tuple(groups),tuple(tools),
-                         tuple(prefixes),row["generation"],data["revision"])
+                         tuple(prefixes),tuple(redactions),row["generation"],data["revision"])
 
     def assert_fresh(self, principal: Principal) -> Principal:
         current=self.get(principal.subject)
