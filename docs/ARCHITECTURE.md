@@ -207,3 +207,14 @@ never to construct indexed context or claim certainty. The public
 biased toward easy matches; this benchmark is not a blind external corpus
 retrieval leaderboard. Stage 03 MES/OT and Stage 05 numerical claim verification
 do not become valid through HF text. Stage 06 network security remains separate.
+
+## Stage 10 second public corpus / calibration lane
+
+NVIDIA TechQA `train.json` downloaded with a pinned HF revision and card
+license guard -> source context dedup and connected-component grouping ->
+balanced answerable/impossible QA split -> isolated `techqa-public`
+SQLite/FTS5 index -> document-level rankings and raw top sparse score ->
+DEV-only threshold selection -> frozen TEST confusion, selective coverage,
+false-answer rate and source MRR. No model is shown gold `is_impossible`
+labels; the score is not an independently calibrated confidence probability.
+The data concern public IT technical support, not live industrial data.

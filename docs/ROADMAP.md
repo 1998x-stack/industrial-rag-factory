@@ -91,3 +91,12 @@ Stages are **sequential acceptance gates**, not claims that future components al
   knowledge QA from actual production MES/OT evidence.
 - S09-T06 future: expert-labeled independent industrial documents and
   AssetOpsBench/TechQA dataset-specific adapters.
+
+### S10 [TechQA answerability benchmark; public source text only]
+- S10-T01 independently licensed public TechQA adapter and source schema.
+- S10-T02 split-aware document/source grouping, answerable/impossible balance.
+- S10-T03 actual Stage 01 sparse retrieval and document-level ranking.
+- S10-T04 DEV-only abstention score cutoff, held-out TEST confusion/coverage.
+- S10-T05 online real dataset smoke and JSON report artifacts.
+- S10-T06 future real multilingual embedding and reranker benchmarks,
+  expert industrial evidence judgments and group bootstrap extensions.

@@ -377,3 +377,27 @@ API key and append `--generate --generation-cases 3` to the benchmark
 command. This exercises the existing generator and citation-ID checks on
 at most five real benchmark queries; no default CI invokes the API, and
 the result does **not** certify answer correctness.
+
+## Stage 10 — NVIDIA TechQA real-data abstention benchmark
+
+Extends S09 with an independent second publicly available technical-support
+corpus, NVIDIA `TechQA-RAG-Eval` (Apache-2.0 declaration). It exercises
+document retrieval **and unanswerable question detection**, without giving
+the `is_impossible` gold label to the retriever or inference policy.
+
+```bash
+pip install -e '.[huggingface,dev]'
+python scripts/stage10_techqa.py --fetch --per-class 6 --extra-corpus 48 --k 3
+```
+
+This pins the full HF dataset commit, checks the declared license and JSON
+schema, loads a bounded sample of source contexts and extra unjudged corpus,
+runs S01 sparse FTS retrieval, calibrates an FTS score threshold **on DEV
+only**, and freezes the threshold for held-out TEST precision/coverage
+analysis. Metrics include TEST confusion counts, unanswerable false-answer
+rate, balanced accuracy, coverage and answerable source MRR@3.
+
+The dataset measures IT technical support, **not physical plant failures**.
+A threshold tuned on one tiny TechQA corpus is NOT deployment confidence
+calibration or a substitute for fact entailment. Production OT/IAM approval
+remains blocked. See `docs/STAGE_10.md`.
