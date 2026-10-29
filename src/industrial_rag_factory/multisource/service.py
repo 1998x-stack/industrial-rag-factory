@@ -53,7 +53,9 @@ class MultiSourceService:
                        timestamp: str, tenant_id: str, groups: tuple[str,...]) -> list[Evidence]:
         ids=self.graph.relationship_sources(source,predicate,target,
             tenant_id=tenant_id,groups=groups,at_time=timestamp)
-        return [Evidence("graph:"+id_,"graph_relation","fixture://relations/"+id_,
+        provenance={r["source_record_id"]:r["source_uri"] for r in self.graph.relations
+                    if r["from"]==source and r["to"]==target and r["predicate"]==predicate}
+        return [Evidence("graph:"+id_,"graph_relation",provenance[id_],
                          id_,source,timestamp,f"{source} {predicate} {target}")
                 for id_ in ids]
 
@@ -159,13 +161,14 @@ class MultiSourceService:
             usable_times=set()
             for sample in samples:
                 in_window=instant(sample.timestamp) in expected
-                mapped=(self._graph_link(record.equipment_id,"hasMeasurementPoint",
+                point_kind=self.graph.entities.get(sample.point_id,{}).get("quantity_kind")
+                mapped=(point_kind==kind and self._graph_link(record.equipment_id,"hasMeasurementPoint",
                         sample.point_id,sample.timestamp,tenant_id,groups)
                         and self._graph_link(sample.point_id,"measuresAsset",
                         record.equipment_id,sample.timestamp,tenant_id,groups))
                 if not in_window or not mapped or sample.quality!="GOOD":
                     rejected_count+=1
-                    limitations.append(f"{sample.sample_id}: wrong cadence, invalid mapping, or poor quality.")
+                    limitations.append(f"{sample.sample_id}: wrong cadence, point quantity kind, mapping, or quality.")
                     unexpected=True
                     continue
                 if instant(sample.timestamp) in usable_times:

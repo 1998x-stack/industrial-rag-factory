@@ -296,3 +296,24 @@ def test_identity_mapping_evidence_is_preserved(source):
     result=assess(source)
     assert any(item["kind"]=="identity_mapping" and item["source_record_id"]=="MAP-002"
                for item in result["evidence"])
+
+
+def test_point_quantity_kind_cannot_be_spoofed(source):
+    hist=load("historian.json")
+    hist["samples"][0]["point_id"]="TEMP03"
+    # The sample says vibration, but the graph declares temperature.
+    s=modified(source,historian=hist)
+    try:
+        result=assess(s)
+        assert result["status"]=="insufficient_evidence"
+        assert "point quantity kind" in " ".join(result["limitations"])
+    finally:
+        s.close()
+
+
+def test_graph_provenance_uri_matches_exact_source(source):
+    r=assess(source)
+    relations=[e for e in r["evidence"] if e["kind"]=="graph_relation"]
+    assert relations
+    assert all(e["source_uri"]=="fixture://relations/"+e["source_record_id"].replace("REC-","")
+               for e in relations)

@@ -72,7 +72,8 @@
       ],
       "source_uri": "fixture://master/VIB03-A",
       "tag": "TAG_VIB03_A",
-      "valid_to": "2026-05-01T00:00:00+08:00"
+      "valid_to": "2026-05-01T00:00:00+08:00",
+      "quantity_kind": "vibration_velocity"
     },
     {
       "id": "VIB03-B",
@@ -84,7 +85,8 @@
       ],
       "source_uri": "fixture://master/VIB03-B",
       "tag": "TAG_VIB03_B",
-      "valid_from": "2026-05-01T00:00:00+08:00"
+      "valid_from": "2026-05-01T00:00:00+08:00",
+      "quantity_kind": "vibration_velocity"
     },
     {
       "id": "TEMP03",
@@ -95,7 +97,8 @@
         "demo-readers"
       ],
       "source_uri": "fixture://master/TEMP03",
-      "tag": "TAG_TEMP03"
+      "tag": "TAG_TEMP03",
+      "quantity_kind": "temperature"
     },
     {
       "id": "VIB04",
@@ -106,7 +109,8 @@
         "demo-readers"
       ],
       "source_uri": "fixture://master/VIB04",
-      "tag": "TAG_VIB04"
+      "tag": "TAG_VIB04",
+      "quantity_kind": "vibration_velocity"
     },
     {
       "id": "NOISE-P102",
@@ -117,7 +121,8 @@
         "demo-readers"
       ],
       "source_uri": "fixture://master/NOISE-P102",
-      "tag": "TAG_NOISE_P102"
+      "tag": "TAG_NOISE_P102",
+      "quantity_kind": "sound_pressure"
     },
     {
       "id": "B-104",

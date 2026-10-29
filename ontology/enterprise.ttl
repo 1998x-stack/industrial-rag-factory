@@ -40,3 +40,5 @@ ex:sourceUri a owl:DatatypeProperty ; rdfs:range xsd:string .
 ex:sourceRecordId a owl:DatatypeProperty ; rdfs:range xsd:string .
 ex:validFrom a owl:DatatypeProperty ; rdfs:range xsd:dateTime .
 ex:validTo a owl:DatatypeProperty ; rdfs:range xsd:dateTime .
+
+ex:quantityKind a owl:DatatypeProperty ; rdfs:range xsd:string .
