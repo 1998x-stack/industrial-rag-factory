@@ -58,3 +58,16 @@ jobs:
         with:
           name: stage04-evaluation
           path: outputs/stage04_evaluation.json
+
+      - name: Stage 05 evidence and claim verification
+        run: |
+          irf grounding-verify B-104
+          irf grounding-verify B-999
+          irf grounding-evaluate
+          python scripts/stage05_evaluate.py
+      - name: Publish Stage 05 claim verification report
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage05-evaluation
+          path: outputs/stage05_evaluation.json

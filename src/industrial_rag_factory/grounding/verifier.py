@@ -4,13 +4,18 @@ No LLM verdict and no document snippet can make a numeric claim authoritative.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Iterable
+
+from industrial_rag_factory.multisource.units import compare_upper
 
 from .contracts import Claim, ClaimResult, EvidenceBundle, EvidenceItem
 
 REQUIRED_KINDS = {"identity_mapping","mes_execution","graph_relation",
                   "specification","measurement"}
+LIMIT = re.compile(r"^upper limit ([0-9]+(?:\\.[0-9]+)?) (mm/s|m/s); (vibration_velocity)$")
+SAMPLE = re.compile(r"^([0-9]+(?:\\.[0-9]+)?) (mm/s|m/s); exceeded=(True|False)$")
 
 
 @dataclass(frozen=True)
@@ -35,14 +40,36 @@ def audit_bundle(bundle: EvidenceBundle) -> Audit:
             problems.append("Document text cannot be promoted into specification authority")
     kinds={item.kind for item in bundle.items}
     numeric=[x for x in bundle.items if x.kind=="measurement"]
+    # Independently recompute each sample exceedance against a single applicable
+    # synthetic approved specification. The upstream S03 checks timing/quality.
+    specs=[item for item in bundle.items if item.kind=="specification"]
+    spec_match = LIMIT.fullmatch(specs[0].value) if len(specs)==1 else None
+    if spec_match is None:
+        problems.append("No unique parsable approved measurement limit")
     detected=[]
     for item in numeric:
-        if item.value.endswith("exceeded=True"):
-            detected.append(True)
-        elif item.value.endswith("exceeded=False"):
-            detected.append(False)
-        else:
-            problems.append("Measurement exceedance flag invalid")
+        parsed=SAMPLE.fullmatch(item.value)
+        if parsed is None:
+            problems.append("Measurement quantity/flag invalid")
+            continue
+        observed=parsed.group(3)=="True"
+        detected.append(observed)
+        if spec_match:
+            try:
+                exceeds, _, _=compare_upper(
+                    parsed.group(1),parsed.group(2),spec_match.group(3),
+                    spec_match.group(1),spec_match.group(2))
+                if exceeds!=observed:
+                    conflicts.append("Measurement flag contradicts specification comparison")
+            except ValueError:
+                problems.append("Measurement has incompatible unit or quantity kind")
+    mes=[item for item in bundle.items if item.kind=="mes_execution"]
+    if not mes or not all(
+        item.value.startswith(bundle.batch_id+" ") and
+        any((" "+equipment+" ") in item.value for equipment in bundle.equipment)
+        for item in mes
+    ):
+        problems.append("MES provenance does not match batch and equipment")
     if bundle.status=="insufficient_evidence":
         problems.append("Structured assessment reports insufficient evidence")
     if bundle.execution_state!="completed":
