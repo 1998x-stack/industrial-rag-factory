@@ -235,12 +235,12 @@ def run_scale(snapshot: dict, *,
                     percase=records
             datasets[variant]={"index":index,"load":runs,
                 "case_metrics":[{"id":r["id"],"group_id":r["group_id"],
-                                 "mrr":r["mrr"] if r["mrr"] is not None else 0.}
-                                for r in percase]}
+                                 "mrr":r["mrr"]}
+                                for r in percase if r["mrr"] is not None]}
     paired=None
     if stress:
-        # Same canonical case IDs can recur under repeated benchmark loops:
-        # aggregate at case ID, then bootstrap by independent source groups.
+        # MRR delta uses ANSWERABLE test questions only. Same case IDs can
+        # recur under benchmark loops; aggregate by ID and bootstrap groups.
         def bycase(rows):
             grouped={}
             for r in rows:
