@@ -112,3 +112,16 @@ def test_document_level_dedup_metrics_are_bounded():
     assert miss["recall"]==0 and miss["mrr"]==0
     with pytest.raises(ValueError):
         score(["doc1"],set(),3)
+
+
+def test_unjudged_distractor_sources_do_not_count_as_qrels():
+    prepared=load_industrybench_csv(rows_csv(150),revision=SHA,
+                                    limit_per_split=8,distractor_docs=30)
+    assert prepared["unjudged_distractor_docs"]==30
+    targets={q["gold_source_uri"] for q in prepared["queries"]}
+    extras={d["source_uri"] for d in prepared["documents"]}-targets
+    assert len(extras)==30
+    report=evaluate_benchmark(prepared,modes=("sparse",),k=3,
+                              chunk_size=120,overlap=20,resamples=100)
+    assert report["unjudged_distractor_docs"]==30
+    assert report["corpus_docs"]>report["queries"]

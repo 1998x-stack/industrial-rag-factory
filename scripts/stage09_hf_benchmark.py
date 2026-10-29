@@ -21,6 +21,7 @@ def main() -> None:
     parser.add_argument("--revision",default="main",
                         help="full pinned revision SHA or main (resolved and recorded)")
     parser.add_argument("--limit-per-split",type=int,default=12)
+    parser.add_argument("--distractors",type=int,default=64)
     parser.add_argument("--snapshot",default="data/hf/industrybench.json")
     parser.add_argument("--output",default="outputs/stage09_hf_report.json")
     parser.add_argument("--k",type=int,default=5)
@@ -30,7 +31,8 @@ def main() -> None:
     snapshot=Path(args.snapshot)
     if args.fetch:
         details=prepare_industrybench(snapshot,revision=args.revision,
-                                      limit_per_split=args.limit_per_split)
+                                      limit_per_split=args.limit_per_split,
+                                      distractor_docs=args.distractors)
         print("Pinned real dataset:",json.dumps(details,ensure_ascii=False))
     if not snapshot.is_file():
         parser.error("No local benchmark snapshot. Supply --fetch explicitly.")

@@ -120,7 +120,7 @@ jobs:
       - run: pip install -e '.[huggingface]'
       - name: Download pinned public IndustryBench and run real RAG
         run: |
-          python scripts/stage09_hf_benchmark.py --fetch --limit-per-split 8 --k 3 \
+          python scripts/stage09_hf_benchmark.py --fetch --limit-per-split 8 --distractors 64 --k 3 \
             --modes sparse hybrid
       - name: Publish real public-data result, no corpus text
         uses: actions/upload-artifact@v4

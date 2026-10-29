@@ -31,7 +31,7 @@ def evaluate_benchmark(snapshot: dict, *, modes: tuple[str,...] = ("sparse","hyb
     docs=snapshot.get("documents")
     queries=snapshot.get("queries")
     if (not isinstance(docs,list) or not isinstance(queries,list) or
-        not 12<=len(queries)<=600 or not 1<=len(docs)<=600 or
+        not 12<=len(queries)<=600 or not 1<=len(docs)<=900 or
         not set(modes)<={"sparse","hybrid","dense"} or
         not modes or not 1<=k<=10 or not 20<=overlap<chunk_size<=1500):
         raise ValueError("Invalid benchmark bounds")
@@ -61,9 +61,19 @@ def evaluate_benchmark(snapshot: dict, *, modes: tuple[str,...] = ("sparse","hyb
                 per_case=[]
                 for query in queries:
                     started=time.perf_counter()
-                    hits=pipeline.retriever.search(
+                    raw_hits=pipeline.retriever.search(
                         query["question"],tenant="hf-public",groups=("hf-benchmark",),
-                        mode=mode,top_k=k)
+                        mode=mode,top_k=min(50,max(20,k*10)))
+                    # Gold labels are document-level, while Stage01 retrieves chunks.
+                    # Overfetch and deduplicate by source before scoring.
+                    hits=[]
+                    seen=set()
+                    for hit in raw_hits:
+                        if hit.source_uri not in seen:
+                            hits.append(hit)
+                            seen.add(hit.source_uri)
+                        if len(hits)>=k:
+                            break
                     delay=(time.perf_counter()-started)*1000
                     unique=list(dict.fromkeys(x.source_uri for x in hits))
                     metrics=score(unique,{query["gold_source_uri"]},k)
@@ -101,6 +111,7 @@ def evaluate_benchmark(snapshot: dict, *, modes: tuple[str,...] = ("sparse","hyb
             json.dumps(snapshot,sort_keys=True,ensure_ascii=False,
                        separators=(",",":")).encode("utf-8")).hexdigest(),
         "corpus_docs":len(docs),"queries":len(queries),
+        "unjudged_distractor_docs":snapshot.get("unjudged_distractor_docs",0),
         "chunk_size":chunk_size,"overlap":overlap,"k":k,
         "index_chunks":sum(x["chunks"] for x in ingest),
         "index_duration_ms_sum":round(sum(x["duration_ms"] for x in ingest),3),

@@ -96,3 +96,16 @@ learned multilingual embedding/reranking baselines with clearly accounted
 inference latency/cost. Connect industrial data through real approved
 source-specific connectors only after S06 production security readiness
 and explicit facility authorization.
+
+## Unjudged public distractors and source-ranked evaluation
+
+The live job adds 64 public `knowledge_text` sources not paired with the 24
+labeled questions. These are selected by content-hash order, independent
+of test queries or answer strings. They are **unjudged** sources; do not
+treat missing qrels as verified irrelevance.
+
+The retriever overfetches physical chunks, then deduplicates by source URI
+before calculating document-level MRR/Recall and emitting citation
+candidates. This fixes the mismatch between chunk-level S01 results and
+source-document benchmark labels. The live smoke is still a small
+convenience sample and cannot support general accuracy claims.
