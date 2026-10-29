@@ -131,3 +131,28 @@ The original document `query`, `ingest`, and `evaluate` commands remain unchange
 See [Stage 02 acceptance](docs/STAGE_02.md). **Stage 03** will connect this graph to
 the read-only SQL/time-series retrieval plane; the S01 LLM currently receives document
 evidence only, not authoritative graph-derived facts.
+
+## Stage 03 — Multi-source industrial retrieval
+
+A new offline, read-only path joins **MES SQLite → approved external asset alias →
+temporal graph → time-series measurements → approved specification → unit-aware
+threshold evidence**. It returns observations and limitations, not equipment
+fault diagnoses or industrial actuation instructions.
+
+Run from the repository root:
+
+    pip install -e '.[api,llm,pdf,docx,ontology,dev]'
+    irf multisource-assess B-104
+    irf multisource-assess B-105
+    irf multisource-evaluate
+    python scripts/stage03_evaluate.py
+    irf serve
+
+Flask: POST /v1/multisource/assess with JSON {"batch_id":"B-104"} on localhost.
+The Stage 01 document retriever can contribute context-only evidence; structured
+measurements and specifications may not be overridden by unverified text.
+
+See docs/STAGE_03.md for source contracts, failure modes, CI and limitations.
+The MES, historian and thresholds are **synthetic fixtures only**. Production
+connections, authenticated access, arbitrary user SQL/SPARQL, and OT actuation
+are deliberately unsupported.

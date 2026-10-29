@@ -46,3 +46,19 @@ Do not expose the Flask server publicly. Production IAM, OT controls, tool execu
 - `ontology/enterprise.ttl`: application terms may link to IOF constructs; changes
   require version-lock review, SHACL test and all 36 golden CQs.
 - Never confuse `no_verified_path` with a definitive absence-of-fact conclusion.
+
+## Stage 03 engineering rules
+
+- Query MES only with the enumerated prepared SELECT templates; no model-generated
+  SQL or mutations.
+- Resolve external aliases with approved, tenant/group and interval-correct
+  identity mappings before merging sources. Do not trust labels or embeddings
+  as identity.
+- At each sample timestamp, require valid asset-to-point and point-to-asset
+  relations. Reject sensor mapping changes silently applied to past samples.
+- Preserve source URI, record ID and explicit uncertainty for every evidence item.
+- Unit conversion is an approved local subset with physical quantity kinds,
+  not complete QUDT inference.
+- Missing data, bad quality, mismatched relations and specifications fail
+  closed to insufficient evidence. Never infer fault causality or product
+  conformity from threshold comparisons.

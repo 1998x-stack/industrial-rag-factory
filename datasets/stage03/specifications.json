@@ -1,0 +1,39 @@
+{
+  "dataset": "synthetic-approved-specs",
+  "specifications": [
+    {
+      "source_record_id": "SP-C-1",
+      "specification_id": "SPEC-C",
+      "equipment_id": "CUT-03",
+      "mode": "CUTTING",
+      "kind": "vibration_velocity",
+      "upper_limit": "4.5",
+      "unit": "mm/s",
+      "valid_from": "2026-01-01T00:00:00+08:00",
+      "valid_to": null,
+      "approved": true,
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://specs/SP-C-1"
+    },
+    {
+      "source_record_id": "SP-D-1",
+      "specification_id": "SPEC-D",
+      "equipment_id": "CUT-04",
+      "mode": "CUTTING",
+      "kind": "vibration_velocity",
+      "upper_limit": "3.2",
+      "unit": "mm/s",
+      "valid_from": "2026-01-01T00:00:00+08:00",
+      "valid_to": null,
+      "approved": true,
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://specs/SP-D-1"
+    }
+  ]
+}

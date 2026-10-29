@@ -13,6 +13,7 @@ ex:AssetShape a sh:NodeShape ; sh:targetClass ex:EquipmentAsset ;
 
 ex:PointShape a sh:NodeShape ; sh:targetClass ex:MeasurementPoint ;
   sh:property [ sh:path ex:sensorTag ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path ex:quantityKind ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
   sh:property [ sh:path ex:measuresAsset ; sh:minCount 1 ; sh:maxCount 1 ; sh:class ex:EquipmentAsset ] ;
   sh:property [ sh:path ex:sourceUri ; sh:minCount 1 ] .
 

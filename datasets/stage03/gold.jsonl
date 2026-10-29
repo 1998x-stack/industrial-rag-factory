@@ -1,0 +1,3 @@
+{"id":"MSQ-001","batch_id":"B-104","expected_status":"observed_exceedance","expected_equipment":["CUT-03"],"expected_exceedance_count":2}
+{"id":"MSQ-002","batch_id":"B-105","expected_status":"within_observed_limits","expected_equipment":["CUT-04"],"expected_exceedance_count":0}
+{"id":"MSQ-003","batch_id":"B-999","expected_status":"insufficient_evidence","expected_equipment":[],"expected_exceedance_count":0}

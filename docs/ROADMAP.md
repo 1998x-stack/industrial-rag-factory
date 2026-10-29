@@ -40,7 +40,7 @@ Stages are **sequential acceptance gates**, not claims that future components al
 - S02-T04 SHACL shape validation and explicit open-world/closed-world policy.
 - S02-T05 build, publish and verify RDF graph; CQ benchmark.
 
-### S03
+### S03 [implemented synthetic, read-only multi-source baseline; see docs/STAGE_03.md]
 - S03-T01 design read-only SQL operator grammar and permission context.
 - S03-T02 add graph traversal operator constrained by ontology.
 - S03-T03 implement historian/time-series query, sampling quality and time alignment.

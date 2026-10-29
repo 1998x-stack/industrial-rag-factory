@@ -101,8 +101,11 @@ class KnowledgeGraph:
                 g.add((s,ONTO.accessGroup,Literal(group)))
             if item["kind"] == "EquipmentAsset":
                 g.add((s,ONTO.assetId,Literal(item["id"])))
-            if item["kind"] == "MeasurementPoint" and "tag" in item:
-                g.add((s,ONTO.sensorTag,Literal(item["tag"])))
+            if item["kind"] == "MeasurementPoint":
+                if "tag" in item:
+                    g.add((s,ONTO.sensorTag,Literal(item["tag"])))
+                if "quantity_kind" in item:
+                    g.add((s,ONTO.quantityKind,Literal(item["quantity_kind"])))
         for rel in self.relations:
             if rel["from"] not in visible or rel["to"] not in visible:
                 continue

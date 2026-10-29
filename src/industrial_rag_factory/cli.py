@@ -38,6 +38,12 @@ def main() -> None:
     semantic_export = sub.add_parser("semantic-export")
     semantic_export.add_argument("output")
     semantic_export.add_argument("--at-time",default="2026-10-20T10:00:00+08:00")
+    multi = sub.add_parser("multisource-assess")
+    multi.add_argument("batch_id")
+    multi.add_argument("--kind",default="vibration_velocity")
+    multi.add_argument("--spacing-seconds",type=int,default=600)
+    multi_eval = sub.add_parser("multisource-evaluate")
+    multi_eval.add_argument("--gold",default="datasets/stage03/gold.jsonl")
     args = parser.parse_args()
     settings = Settings.from_env()
     if args.command == "serve":
@@ -60,6 +66,22 @@ def main() -> None:
         else:
             payload = service.export(args.output,tenant_id=settings.tenant_id,
                                      groups=settings.groups,at_time=args.at_time)
+        print(json.dumps(payload,ensure_ascii=False,indent=2))
+        return
+    if args.command.startswith("multisource-"):
+        from .multisource.service import MultiSourceService
+        from .multisource.evaluation import evaluate as multisource_evaluate
+        service = MultiSourceService.from_defaults()
+        try:
+            if args.command == "multisource-assess":
+                payload = service.assess_batch(args.batch_id,tenant_id=settings.tenant_id,
+                                               groups=settings.groups,kind=args.kind,
+                                               spacing_seconds=args.spacing_seconds)
+            else:
+                payload = multisource_evaluate(service,args.gold,
+                    tenant_id=settings.tenant_id,groups=settings.groups)
+        finally:
+            service.close()
         print(json.dumps(payload,ensure_ascii=False,indent=2))
         return
     pipeline = Pipeline(settings)
