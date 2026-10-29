@@ -62,3 +62,19 @@ Do not expose the Flask server publicly. Production IAM, OT controls, tool execu
 - Missing data, bad quality, mismatched relations and specifications fail
   closed to insufficient evidence. Never infer fault causality or product
   conformity from threshold comparisons.
+
+## Stage 04 implementation contract
+
+All model-proposed plans are untrusted and must pass strict QueryPlan
+validation before scheduling. After resolving dependencies, tool inputs
+are revalidated against explicit allowlisted schemas. No generated SQL,
+SPARQL, shell, HTTP endpoints or mutating/OT control tools are permitted.
+Server-specified tenant and groups cannot be supplied by the plan.
+
+SQLite connections must be created and closed inside each tool worker thread,
+not shared across threads. Timed-out reads are not retried. Only explicitly
+transient idempotent operations may retry once within budget.
+
+Trace should contain step IDs, tool names, states, generic error codes and
+timings, not raw prompts, secrets or tool parameters. Stage 05 handles
+claim-level support checks; this stage does not assert factual verification.

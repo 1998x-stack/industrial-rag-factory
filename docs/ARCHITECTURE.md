@@ -77,3 +77,23 @@ anomaly diagnosis is attempted.
 Outputs are structured status, evidence and limitations. Optional Stage 01
 retriever adds document snippets as context-only evidence. DeepSeek generation
 is NOT used to execute SQL or to validate the scientific content of claims.
+
+## Stage 04 trusted query execution boundary
+
+User question -> RulePlanner or DeepSeek JSON proposal -> strict versioned
+QueryPlan contract -> validated dependency graph -> read-only ToolRegistry
+-> bounded worker invocation -> structured tool results and redacted trace.
+
+Registered tools are document.search, entity.resolve, graph.traverse,
+mes.by_batch, historian.read and batch.assess. Arguments use JSON objects
+with exact accepted key sets and typed validation. References are expressed
+as $ref objects that can only point to declared completed prerequisite
+steps; output values are revalidated before any tool execution.
+
+Each SQL-backed operation opens its connection inside its own worker thread.
+Time budgets and circuit/retry policy bound orchestration. Thread timeouts
+are SOFT; they cannot terminate a running function. The roadmap requires
+killable worker process isolation, IAM and full auditing for production.
+
+A completed execution provides structured facts and provenance, NOT an
+authoritative natural-language diagnostic claim.
