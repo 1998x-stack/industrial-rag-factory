@@ -31,9 +31,9 @@
     {
       "repo_id": "nvidia/TechQA-RAG-Eval",
       "license_declared": "apache-2.0",
-      "role": "technical support unanswerable queries",
-      "status": "reviewed_not_yet_implemented",
-      "notes": "Contexts are answer-associated; cannot claim unbiased corpus retrieval."
+      "role": "technical IT QA answerable and impossible retrieval",
+      "status": "implemented_online_stage10",
+      "notes": "Schema-checked train.json, source context and unanswerable labels; not physical OT telemetry."
     }
   ],
   "guarantees": [

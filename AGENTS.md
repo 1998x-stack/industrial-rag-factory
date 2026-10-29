@@ -171,3 +171,22 @@ claim-level support checks; this stage does not assert factual verification.
   the real-data report. Store source bytes under ignored data/hf only.
 - Graph, SQL, historian and security stages remain unchanged without a
   properly authorized, separately validated public source mapping.
+
+## Stage 10 public QA abstention safety
+
+- `is_impossible` and any reference answer text belong ONLY to evaluation;
+  never expose to retrieval, prompts, threshold inference or indexing.
+- Choose abstention cutoffs using DEV only. Never retune based on TEST results.
+- Shared source documents/cross-linked contexts stay in one split, with
+  normalized-question deduplication and group-level holdouts.
+- Report both answerable retrieval and impossible-case false-answer rate.
+  Document top-score threshold is not calibrated probability or industrial
+  safety evidence.
+- Source corpus and evaluation gold remain separate. Extra unjudged
+  documents are not trustworthy negative relevance labels.
+
+- Stage 10 pretrained multilingual model downloads must be explicit, use
+  the exact allowlisted public model repo and a resolved full commit SHA.
+  Avoid remote model code, unpinned revisions and automatic downloads in CI.
+- Record model/backend and separate real pretrained metrics from lexical
+  baseline; do not claim unexecuted embeddings were benchmarked.
