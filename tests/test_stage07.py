@@ -127,7 +127,7 @@ def test_factory_short_protocol_is_reproducible(tmp_path):
     assert any(x["id"]=="model" for x in first["non_measured_factors"])
     assert "production" in " ".join(first["limitations"])
     html=render_html(first)
-    assert "<!doctype html>" in html and "Cluster" not in html
+    assert "<!doctype html>" in html and "cluster-bootstrap" in html
     assert first["experiment_id"] in html
 
 
