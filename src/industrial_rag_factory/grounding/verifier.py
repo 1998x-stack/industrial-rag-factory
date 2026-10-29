@@ -166,10 +166,30 @@ def verify_claims(
             ("Verified only against synthetic, scoped, read-only structured fixtures.",)))
     statuses={x.status for x in answers}
     abstain=not answers or any(x.status!="supported" for x in answers)
+    graph_items={}
+    for bundle in bundles:
+        for item in bundle.items:
+            graph_items[item.id]={"id":item.id,"kind":item.kind,
+                                  "source_record_id":item.source_record_id}
+    edges=[]
+    for decision in answers:
+        for identifier in decision.supporting:
+            edges.append({"claim_id":decision.claim.claim_id,
+                          "evidence_id":identifier,"relationship":"supports"})
+        for identifier in decision.refuting:
+            edges.append({"claim_id":decision.claim.claim_id,
+                          "evidence_id":identifier,"relationship":"refutes"})
+    claim_graph={"claim_nodes":[
+        {"id":decision.claim.claim_id,"subject":decision.claim.subject,
+         "predicate":decision.claim.predicate,"status":decision.status}
+        for decision in answers],
+        "evidence_nodes":[graph_items[key] for key in sorted(graph_items)],
+        "edges":edges}
     return {"status":"supported" if statuses=={"supported"} else
             "conflicting" if "conflicting" in statuses else
             "refuted" if "refuted" in statuses else "insufficient_evidence",
             "abstain":abstain,"claims":[x.to_dict() for x in answers],
+            "claim_graph":claim_graph,
             "limitations":[
                 "Structural verification against synthetic adapter outputs only.",
                 "No independent source authenticity, general textual entailment, or fault diagnosis.",
