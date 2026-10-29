@@ -38,7 +38,7 @@ def _split(group_key: str) -> str:
 
 
 def load_industrybench_csv(data: bytes, *, revision: str,
-                           limit_per_split: int = 24) -> dict:
+                           limit_per_split: int = 24, distractor_docs: int = 0) -> dict:
     """Create bounded real-data retrieval manifest from pinned CSV bytes.
 
     All 3 partitions use documents in the searchable corpus as for BEIR.
@@ -47,6 +47,8 @@ def load_industrybench_csv(data: bytes, *, revision: str,
     """
     if not COMMIT.fullmatch(revision):
         raise ValueError("Dataset must be resolved to full 40-hex commit")
+    if type(distractor_docs) is not int or not 0<=distractor_docs<=300:
+        raise ValueError("Invalid distractor budget")
     if (type(limit_per_split) is not int or not 4<=limit_per_split<=200
         or len(data)>40*1024*1024 or not data):
         raise ValueError("Source or sample bound exceeded")
@@ -109,6 +111,21 @@ def load_industrybench_csv(data: bytes, *, revision: str,
         raise ValueError("Not enough independent real-data groups for evaluation")
     documents={}
     queries=[]
+    chosen_groups={row["group_id"] for row in chosen}
+    chosen_hashes={row["source_hash"] for row in chosen}
+    candidates={}
+    for row in raw:
+        if row["group_id"] in chosen_groups or row["source_hash"] in chosen_hashes:
+            continue
+        candidates.setdefault(row["source_hash"],row)
+    extras=sorted(candidates.values(),
+                  key=lambda x:(_sha(x["source_hash"].encode()),x["id"]))
+    for row in extras[:distractor_docs]:
+        uri=f"hf://{HF_REPO}@{revision}/knowledge/{row['source_hash'][:24]}"
+        documents[uri]={"source_uri":uri,"text":row["knowledge_text"],
+                        "sha256":_sha(row["knowledge_text"].encode("utf-8")),
+                        "revision":revision,"group_id":row["group_id"],
+                        "title":f"Unjudged industrial context {row['source_hash'][:12]}"}
     for row in chosen:
         uri=f"hf://{HF_REPO}@{revision}/knowledge/{row['source_hash'][:24]}"
         if uri in documents and documents[uri]["text"]!=row["knowledge_text"]:
@@ -128,6 +145,7 @@ def load_industrybench_csv(data: bytes, *, revision: str,
         "dataset_id":HF_REPO,"license_tag":HF_LICENSE,"revision":revision,
         "source_file":HF_FILE,"raw_sha256":_sha(data),
         "selection":"content-prefix-group-stable-hash-60-20-20",
+        "unjudged_distractor_docs":min(distractor_docs,len(extras)),
         "documents":sorted(documents.values(),key=lambda x:x["source_uri"]),
         "queries":sorted(queries,key=lambda x:(SPLITS.index(x["split"]),x["id"])),
         "counts":{s:sum(x["split"]==s for x in queries) for s in SPLITS},
@@ -141,7 +159,7 @@ def load_industrybench_csv(data: bytes, *, revision: str,
 
 
 def prepare_industrybench(out: str | Path, *, revision: str = "main",
-                          limit_per_split: int = 24) -> dict:
+                          limit_per_split: int = 24, distractor_docs: int = 64) -> dict:
     """Explicit opt-in network fetch through pinned Hugging Face dataset revision.
 
     No arbitrary repo/URL parameters, remote code execution or trust_remote_code.
@@ -167,7 +185,8 @@ def prepare_industrybench(out: str | Path, *, revision: str = "main",
                              filename=HF_FILE,revision=pinned)
     data=Path(filepath).read_bytes()
     prepared=load_industrybench_csv(data,revision=pinned,
-                                    limit_per_split=limit_per_split)
+                                    limit_per_split=limit_per_split,
+                                    distractor_docs=distractor_docs)
     target=Path(out)
     target.parent.mkdir(parents=True,exist_ok=True)
     if target.suffix!=".json":
@@ -176,4 +195,5 @@ def prepare_industrybench(out: str | Path, *, revision: str = "main",
                       encoding="utf-8")
     return {"path":str(target),"revision":pinned,"raw_sha256":prepared["raw_sha256"],
             "counts":prepared["counts"],"documents":len(prepared["documents"]),
+            "unjudged_distractor_docs":prepared["unjudged_distractor_docs"],
             "license_tag":HF_LICENSE}
