@@ -14,8 +14,8 @@ from .contracts import Claim, ClaimResult, EvidenceBundle, EvidenceItem
 
 REQUIRED_KINDS = {"identity_mapping","mes_execution","graph_relation",
                   "specification","measurement"}
-LIMIT = re.compile(r"^upper limit ([0-9]+(?:\\.[0-9]+)?) (mm/s|m/s); (vibration_velocity)$")
-SAMPLE = re.compile(r"^([0-9]+(?:\\.[0-9]+)?) (mm/s|m/s); exceeded=(True|False)$")
+LIMIT = re.compile(r"^upper limit ([0-9]+(?:\.[0-9]+)?) (mm/s|m/s); (vibration_velocity)$")
+SAMPLE = re.compile(r"^([0-9]+(?:\.[0-9]+)?) (mm/s|m/s); exceeded=(True|False)$")
 
 
 @dataclass(frozen=True)
