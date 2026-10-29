@@ -8,7 +8,6 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from collections import defaultdict
 from pathlib import Path
 
 REPO="nvidia/TechQA-RAG-Eval"

@@ -18,6 +18,11 @@ def main():
     p.add_argument("--snapshot",default="data/hf/techqa.json")
     p.add_argument("--output",default="outputs/stage10_techqa.json")
     p.add_argument("--k",type=int,default=3)
+    p.add_argument("--multilingual",action="store_true",
+                   help="explicit opt-in to download/run a real embedding model")
+    p.add_argument("--model-revision",default="main",
+                   help="HF model SHA or main (resolved to SHA)")
+    p.add_argument("--mode",choices=("sparse","dense","hybrid"),default="sparse")
     a=p.parse_args()
     if a.fetch:
         pinned=fetch_techqa(a.snapshot,revision=a.revision,
@@ -28,7 +33,18 @@ def main():
     if not path.exists():
         p.error("No snapshot available; download only with explicit --fetch")
     data=json.loads(path.read_text(encoding="utf-8"))
-    report=evaluate_techqa(data,k=a.k)
+    model_details=None
+    if a.multilingual:
+        from industrial_rag_factory.hfbench.semantic import prepare_multilingual
+        model_details=prepare_multilingual(revision=a.model_revision)
+    if a.mode!="sparse" and not a.multilingual:
+        p.error("Dense/hybrid S10 comparison requires explicit --multilingual")
+    report=evaluate_techqa(data,k=a.k,mode=a.mode,
+          encoder="sentence-transformers" if model_details else "hashing",
+          model_path=model_details["local_snapshot"] if model_details else "")
+    if model_details:
+        report["model_provenance"]={k:v for k,v in model_details.items()
+                                    if k!="local_snapshot"}
     out=Path(a.output)
     out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(json.dumps(report,ensure_ascii=False,indent=2),

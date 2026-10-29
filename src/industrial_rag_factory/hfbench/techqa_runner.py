@@ -20,7 +20,9 @@ from .abstention import decide, metrics, tune
 
 
 def evaluate_techqa(snapshot: dict, *, k: int = 3,
-                    chunk_size: int = 380, overlap: int = 40) -> dict:
+                    chunk_size: int = 380, overlap: int = 40,
+                    encoder: str = "hashing", model_path: str = "",
+                    mode: str = "sparse") -> dict:
     if snapshot.get("dataset_id")!="nvidia/TechQA-RAG-Eval":
         raise ValueError("Unknown public TechQA data")
     docs=snapshot.get("docs")
@@ -30,6 +32,11 @@ def evaluate_techqa(snapshot: dict, *, k: int = 3,
         or type(k) is not int or not 1<=k<=10
         or not 20<=overlap<chunk_size<=1000):
         raise ValueError("Invalid benchmark parameters")
+    if (encoder not in ("hashing","sentence-transformers") or
+        mode not in ("sparse","dense","hybrid") or
+        (encoder=="sentence-transformers" and
+         (not model_path or not Path(model_path).is_dir()))):
+        raise ValueError("Unknown or unprepared embedding backend")
     index_uris={d["source_uri"] for d in docs}
     if len(index_uris)!=len(docs):
         raise ValueError("Duplicate corpus source")
@@ -42,7 +49,8 @@ def evaluate_techqa(snapshot: dict, *, k: int = 3,
     with tempfile.TemporaryDirectory(prefix="irf-techqa-") as folder:
         settings=replace(Settings(),db_path=str(Path(folder)/"index.sqlite3"),
                          tenant_id="techqa-public",groups=("techqa-test",),
-                         dense_backend="hashing",generator="extractive",planner="rules")
+                         dense_backend=encoder,dense_model=model_path if model_path else
+                         Settings.dense_model,generator="extractive",planner="rules")
         pipe=Pipeline(settings)
         try:
             for document in docs:
@@ -58,7 +66,7 @@ def evaluate_techqa(snapshot: dict, *, k: int = 3,
                 started=time.perf_counter()
                 hits=pipe.retriever.search(query["question"],
                     tenant="techqa-public",groups=("techqa-test",),
-                    mode="sparse",top_k=min(50,max(k*10,20)))
+                    mode=mode,top_k=min(50,max(k*10,20)))
                 top_score=hits[0].score if hits else None
                 seen=set()
                 ranked=[]
@@ -107,6 +115,7 @@ def evaluate_techqa(snapshot: dict, *, k: int = 3,
                 json.dumps(snapshot,sort_keys=True,ensure_ascii=False,
                            separators=(",",":")).encode("utf-8")).hexdigest(),
             "corpus_docs":len(docs),"index_chunks":index_chunks,
+            "retrieval_mode":mode,"embedding_backend":encoder,
             "queries":len(questions),"unjudged_extra_docs":
                 snapshot.get("unjudged_extra_docs",0),
             "ingest_duration_ms":round(elapsed_ingest*1000,3),

@@ -80,3 +80,10 @@ def test_no_ground_truth_leak_to_index_or_report():
     assert all("is_impossible" not in d for d in normalized["docs"])
     assert all("answer" not in d for d in normalized["docs"])
     assert all("answer" not in q for q in normalized["queries"])
+
+
+def test_semantic_model_requires_explicit_existing_snapshot(tmp_path):
+    data=normalize_techqa(fixture_rows(),PIN,per_split_per_class=3)
+    with pytest.raises(ValueError,match="unprepared"):
+        evaluate_techqa(data,k=3,encoder="sentence-transformers",
+                        model_path=str(tmp_path/"missing"),mode="dense")
