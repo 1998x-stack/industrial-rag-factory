@@ -15,7 +15,9 @@
       "access_groups": [
         "demo-readers"
       ],
-      "source_uri": "fixture://mes/MES-104"
+      "source_uri": "fixture://mes/MES-104",
+      "equipment_external_id": "EQ-00037",
+      "equipment_source_system": "ERP"
     },
     {
       "record_id": "MES-105",
@@ -31,7 +33,9 @@
       "access_groups": [
         "demo-readers"
       ],
-      "source_uri": "fixture://mes/MES-105"
+      "source_uri": "fixture://mes/MES-105",
+      "equipment_external_id": "EQ-00038",
+      "equipment_source_system": "ERP"
     }
   ]
 }

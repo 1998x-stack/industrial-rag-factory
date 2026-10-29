@@ -38,6 +38,7 @@ def modified(source, *, mes=None, historian=None, specifications=None, graph=Non
         MESReadModel(mes or load("mes.json")),
         HistorianReadModel(historian or load("historian.json")),
         SpecificationRegistry((specifications or load("specifications.json"))["specifications"]),
+        resolver=source.resolver,
     )
 
 
@@ -268,3 +269,31 @@ def test_flask_multisource_scope_and_inputs(tmp_path,monkeypatch):
         "batch_id":"B-104","tenant_id":"other"}).status_code==400
     assert client.post("/v1/multisource/assess",json={
         "batch_id":"B-104","spacing_seconds":0}).status_code==400
+
+
+def test_unverified_external_id_cannot_join(source):
+    m=load("mes.json")
+    m["executions"][0]["equipment_external_id"]="EQ-UNKNOWN"
+    s=modified(source,mes=m)
+    try:
+        result=assess(s)
+        assert result["status"]=="insufficient_evidence"
+        assert "source asset ID unresolved" in " ".join(result["limitations"])
+    finally:
+        s.close()
+
+
+def test_wrong_external_to_canonical_mapping_denied(source):
+    m=load("mes.json")
+    m["executions"][0]["equipment_external_id"]="EQ-00038"
+    s=modified(source,mes=m)
+    try:
+        assert assess(s)["status"]=="insufficient_evidence"
+    finally:
+        s.close()
+
+
+def test_identity_mapping_evidence_is_preserved(source):
+    result=assess(source)
+    assert any(item["kind"]=="identity_mapping" and item["source_record_id"]=="MAP-002"
+               for item in result["evidence"])

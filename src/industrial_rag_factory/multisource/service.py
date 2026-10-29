@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from industrial_rag_factory.semantic.graph import KnowledgeGraph
-from industrial_rag_factory.semantic.identity import instant
+from industrial_rag_factory.semantic.identity import EntityResolver, instant
 from .contracts import DiagnosticResult, Evidence, Interval
 from .historian import HistorianReadModel
 from .specs import SpecificationRegistry
@@ -23,12 +23,13 @@ class MultiSourceService:
 
     def __init__(self, graph: KnowledgeGraph, mes: MESReadModel,
                  historian: HistorianReadModel, specs: SpecificationRegistry,
-                 doc_retriever: Any = None):
+                 resolver: EntityResolver | None = None, doc_retriever: Any = None):
         self.graph=graph
         self.mes=mes
         self.historian=historian
         self.specs=specs
         self.doc_retriever=doc_retriever
+        self.resolver=resolver
 
     @classmethod
     def from_defaults(cls,root: str | Path = ".",doc_retriever: Any = None):
@@ -39,6 +40,7 @@ class MultiSourceService:
             MESReadModel.from_json(root/"datasets/stage03/mes.json"),
             HistorianReadModel.from_json(root/"datasets/stage03/historian.json"),
             SpecificationRegistry.from_json(root/"datasets/stage03/specifications.json"),
+            resolver=EntityResolver.from_json(root/"datasets/stage02/aliases.json"),
             doc_retriever=doc_retriever,
         )
 
@@ -89,6 +91,23 @@ class MultiSourceService:
         for record in records:
             all_equipment.add(record.equipment_id)
             start=record.interval.start
+            if self.resolver is not None:
+                identity=self.resolver.resolve(record.equipment_external_id,
+                    tenant_id=tenant_id,groups=groups,system=record.equipment_source_system,
+                    at_time=start)
+                finish=self.resolver.resolve(record.equipment_external_id,
+                    tenant_id=tenant_id,groups=groups,system=record.equipment_source_system,
+                    at_time=(instant(record.interval.end)-timedelta(microseconds=1)).isoformat())
+                if (identity.status!="resolved" or finish.status!="resolved"
+                    or identity.canonical_id!=record.equipment_id
+                    or finish.canonical_id!=record.equipment_id):
+                    unexpected=True
+                    limitations.append(f"{record.record_id}: source asset ID unresolved, changed, or conflicts with canonical ID.")
+                    continue
+                for rec in identity.source_records:
+                    evidence.append(Evidence("mapping:"+rec,"identity_mapping",
+                        "fixture://identity/"+rec,rec,record.equipment_id,start,
+                        f"{record.equipment_source_system}:{record.equipment_external_id} -> {record.equipment_id}"))
             # Check graph at start and just before end, not just the query time.
             end_check=(instant(record.interval.end)-timedelta(microseconds=1)).isoformat()
             relations=(
