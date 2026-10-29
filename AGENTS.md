@@ -135,3 +135,21 @@ claim-level support checks; this stage does not assert factual verification.
 - Every run records configuration, exact file fingerprints and source revision;
   generate deterministic JSON and escaped HTML. Keep paid model evaluation
   opt-in and outside default offline CI.
+
+## Stage 08 release invariants
+
+- Stage 08 release actions MUST remain local developer CLI only; never expose
+  publish, rollback, restore or purge through unauthenticated Flask routes.
+- No snapshot is modified after publication. Publish/rollback use a verified
+  CAS catalog update and an operator-provided expected-active version.
+- Stage changes must be built from a copy, and changed/deleted sources must
+  be purged in the staged copy. Do not silently retain revoked source text.
+- Manifest sources are explicit fixture:// and workspace-contained datasets/
+  files; do not load network URLs or arbitrary filesystem destinations.
+- HMAC secrets are environment-provided, never logged, serialized or stored
+  in repository samples. SHA hashes do not prove third-party source origin.
+- Optional OTel spans must not include prompt, token, evidence text or path.
+  Durations on synthetic tests are not real production SLO measurements.
+- Fault injection, rollback, catalog integrity and Stage 06 authorization
+  tests must pass before merging. Never turn a green research CI into
+  production or OT deployment permission.

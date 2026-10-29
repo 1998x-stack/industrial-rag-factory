@@ -91,3 +91,12 @@ jobs:
           path: |
             outputs/stage07_ablation.json
             outputs/stage07_report.html
+
+      - name: Stage 08 blue-green release and disaster-recovery smoke
+        run: python scripts/stage08_drill.py
+      - name: Publish Stage 08 readiness and rollback report
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage08-readiness
+          path: outputs/stage08_release_drill.json

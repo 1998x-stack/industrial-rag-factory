@@ -1,0 +1,20 @@
+{
+  "version": "stage08-v1",
+  "sources": [
+    {
+      "source_uri": "fixture://pump_manual.md",
+      "path": "datasets/stage01/pump_manual.md",
+      "revision": "1"
+    },
+    {
+      "source_uri": "fixture://maintenance.md",
+      "path": "datasets/stage01/maintenance.md",
+      "revision": "1"
+    },
+    {
+      "source_uri": "fixture://cut_spec.md",
+      "path": "datasets/stage01/cut_spec.md",
+      "revision": "1"
+    }
+  ]
+}

@@ -93,6 +93,29 @@ class Store:
                         (c.chunk_id,vector_model,json.dumps(vectors[i])),
                     )
 
+
+    def remove_source(self, tenant: str, source_uri: str) -> int:
+        """Physically purge superseded source revisions, FTS and embeddings.
+
+        Used ONLY while building a detached S08 snapshot. Deleting from a
+        published index is forbidden by the release manager's immutable reads.
+        """
+        if not tenant or not source_uri:
+            raise ValueError("Explicit tenant and source are required")
+        with self.con:
+            documents=[r["document_id"] for r in self.con.execute(
+                "SELECT document_id FROM documents WHERE tenant_id=? AND source_uri=?",
+                (tenant,source_uri))]
+            for document_id in documents:
+                ids=[r["chunk_id"] for r in self.con.execute(
+                    "SELECT chunk_id FROM chunks WHERE document_id=?",(document_id,))]
+                for cid in ids:
+                    self.con.execute("DELETE FROM chunk_fts WHERE chunk_id=?",(cid,))
+                    self.con.execute("DELETE FROM chunk_vectors WHERE chunk_id=?",(cid,))
+                self.con.execute("DELETE FROM chunks WHERE document_id=?",(document_id,))
+                self.con.execute("DELETE FROM documents WHERE document_id=?",(document_id,))
+        return len(documents)
+
     @staticmethod
     def _access_sql(groups: tuple[str, ...]) -> str:
         if not groups:

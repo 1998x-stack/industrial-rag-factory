@@ -299,3 +299,36 @@ performed. The experiment seeds perturb indexing order; cluster bootstrap
 resamples *asset groups*, not independently trained models. The small synthetic
 benchmark is not a production-quality generalization estimate.
 See `docs/STAGE_07.md`.
+
+## Stage 08 — Immutable Snapshot Release & Offline Recovery
+
+Stage 08 extends the research pipeline with a **development-only**
+blue/green index prototype using content-hashed synthetic source manifests,
+staged SQLite backups, immutable versioned snapshots, an HMAC-signed local
+release registry, compare-and-swap publish/rollback, and read-only version
+pinning. No live industrial network or plant-control tools exist.
+
+Commands:
+
+    python scripts/stage08_drill.py
+    pytest -q
+    ruff check src tests
+
+The offline drill verifies a clean initial promotion, changed-source
+incremental staging, simulated failures that leave the active version intact,
+stale-CAS rejection and rollback. It emits a JSON readiness report to
+`outputs/stage08_release_drill.json` (also uploaded in GitHub Actions).
+
+To manually experiment with the local CLI, set `IRF_OPS_HMAC_KEY` (32-byte
+random secret) and optionally `IRF_OPS_ROOT=data/stage08`; use `irf
+ops-stage`, `ops-status`, `ops-publish`, `ops-query`, `ops-history`,
+`ops-rollback` and `ops-readiness`, plus `ops-export`, `ops-import`, `ops-recover`\nand `ops-prune`. **Never deploy the sample to a
+production endpoint.** There is no authenticated remote release API.
+
+OpenTelemetry API spans are optional (`pip install -e '.[observability]'`);
+an exporter and real distributed tracing backend are not configured.
+Local p95 is based only on synthetic query samples, not a production SLO.
+Changed-source byte/4 budget is a proxy, **not** a model token count.
+Production readiness always remains explicitly **blocked** because IAM,
+external immutable audit, network-enforced OT boundaries and live release
+approval are missing. See `docs/STAGE_08.md`.
