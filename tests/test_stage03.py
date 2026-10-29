@@ -14,7 +14,6 @@ from industrial_rag_factory.multisource.service import MultiSourceService
 from industrial_rag_factory.multisource.specs import SpecificationRegistry
 from industrial_rag_factory.multisource.sql import MESReadModel
 from industrial_rag_factory.multisource.units import compare_upper, normalize
-from industrial_rag_factory.semantic.graph import KnowledgeGraph
 
 ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/"datasets/stage03"
@@ -180,7 +179,7 @@ def test_graph_sql_disagreement_is_not_overridden(source):
     try:
         result=assess(s)
         assert result["status"]=="insufficient_evidence"
-        assert "mismatch" in " ".join(result["limitations"])
+        assert "unresolved" in " ".join(result["limitations"])
     finally:
         s.close()
 

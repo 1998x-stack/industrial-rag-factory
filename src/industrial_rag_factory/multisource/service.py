@@ -89,7 +89,6 @@ class MultiSourceService:
         all_equipment=set()
         unexpected=False
         for record in records:
-            all_equipment.add(record.equipment_id)
             start=record.interval.start
             if self.resolver is not None:
                 identity=self.resolver.resolve(record.equipment_external_id,
@@ -123,6 +122,7 @@ class MultiSourceService:
                 limitations.append(f"{record.record_id}: MES/graph relation mismatch or invalid time.")
                 unexpected=True
                 continue
+            all_equipment.add(record.equipment_id)
             for a,p,b in relations:
                 evidence.extend(self._evidence_link(a,p,b,start,tenant_id,groups))
             evidence.append(Evidence("mes:"+record.record_id,"mes_execution",
