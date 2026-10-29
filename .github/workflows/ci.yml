@@ -80,3 +80,14 @@ jobs:
         with:
           name: stage06-security-evaluation
           path: outputs/stage06_security_evaluation.json
+
+      - name: Stage 07 factorial ablation + evidence report
+        run: python scripts/stage07_ablate.py
+      - name: Publish Stage 07 experiment and HTML report
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage07-ablation
+          path: |
+            outputs/stage07_ablation.json
+            outputs/stage07_report.html

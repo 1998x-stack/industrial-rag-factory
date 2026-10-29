@@ -117,3 +117,21 @@ claim-level support checks; this stage does not assert factual verification.
 - The sample policy and local HMAC audit are teaching fixtures. Production
   IAM, hardware secret management, immutable audit and read-only OT network
   enforcement need external infrastructure and security sign-off.
+
+## Stage 07 benchmark contract
+
+- Every metric comes from executed retrieval/graph/planner/claim code or a
+  clearly described fail-closed negative control. Do not label unsupported
+  factors, mock API responses or synthetic scores as measured real-model quality.
+- Use source/asset-group train/dev/test manifest. Reject repeated source URI,
+  normalized question and normalized document content across split boundaries.
+- Use DEV-only retrieval parameter selection. Publishing exploratory TEST scores
+  for every factorial contrast does not permit retuning on TEST afterward.
+- Resample independent *asset groups*, using paired IDs/shared group draws
+  for config deltas; never inflate sample size with seeds, repeated chunks
+  or copied questions. Report the bootstrap method, n/groups and caveats.
+- Stage 06 authorization must never be disabled as an evaluation shortcut.
+  Security regressions remain a separate test suite.
+- Every run records configuration, exact file fingerprints and source revision;
+  generate deterministic JSON and escaped HTML. Keep paid model evaluation
+  opt-in and outside default offline CI.

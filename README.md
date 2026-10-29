@@ -268,3 +268,34 @@ See docs/STAGE_06.md and docs/SECURITY_THREAT_MODEL.md. Production
 deployment remains prohibited until a real identity provider, external
 policy service, immutable audit sink, network-level OT separation and
 security review are implemented and tested.
+
+## Stage 07 — Reproducible Ablation Factory
+
+The Stage 07 offline experiment pipeline runs **actual retrieval configurations**
+(chunk size / overlap / sparse-vs-hashing-dense-vs-hybrid) and independent
+synthetic component **negative controls** for graph, planner and claim verification.
+
+It adds 54 labeled synthetic questions, grouped by 27 unique asset/source
+identities across explicit train/dev/test partitions. No group, source URI,
+exact document body or normalized exact question may cross a split.
+DEV labels select one retrieval configuration; TEST measurements of all
+factorial runs are reported as exploratory contrasts. The selected result
+includes cluster-bootstrap 95% CIs and paired differences vs sparse.
+
+    pip install -e '.[api,llm,pdf,docx,ontology,dev]'
+    python scripts/stage07_ablate.py
+    pytest -q
+    ruff check src tests
+
+Artifacts: `outputs/stage07_ablation.json` (machine-readable, config and
+fixture fingerprints, run IDs, metrics, 95% CIs) and
+`outputs/stage07_report.html` (readable comparison, uncertainty and
+unavailable factors).
+
+**Do not claim full model/prompt/parser/reranker ablations.** No alternative
+parser or learned reranker is present; hashing vectors are lexical, not true
+semantic embeddings. No DeepSeek API request or production security bypass is
+performed. The experiment seeds perturb indexing order; cluster bootstrap
+resamples *asset groups*, not independently trained models. The small synthetic
+benchmark is not a production-quality generalization estimate.
+See `docs/STAGE_07.md`.
