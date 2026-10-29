@@ -94,7 +94,7 @@ def validate_args(tool: str, args: dict, *, allow_refs: bool = True) -> None:
                 raise PlanValidationError("Invalid measurement point identifiers")
         else:
             raise PlanValidationError(f"Unsupported {key}")
-    if not allow_refs and "start" in args and "end" in args:
+    if "start" in args and "end" in args and not (ref_info(args["start"]) or ref_info(args["end"])):
         if instant(args["start"]) >= instant(args["end"]):
             raise PlanValidationError("Invalid historian time interval")
 

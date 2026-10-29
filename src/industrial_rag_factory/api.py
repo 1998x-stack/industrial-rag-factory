@@ -129,6 +129,30 @@ def create_app(settings: Settings | None = None, pipeline: Pipeline | None = Non
         except (ValueError,KeyError,TypeError) as exc:
             return jsonify({"error":str(exc)}),400
 
+    @app.post("/v1/agent/query")
+    def agent_query():
+        body = request.get_json(silent=True)
+        # Entire request contract is one question. Planner, auth context and
+        # execution tools are selected only from server-side configuration.
+        if not isinstance(body,dict) or set(body) != {"question"}:
+            return jsonify({"error":"Expected only question; runtime context is server-controlled"}),400
+        question = body["question"]
+        if not isinstance(question,str) or not question.strip() or len(question)>2000:
+            return jsonify({"error":"Invalid question"}),400
+        from .agent.service import AgentService
+        agent = None
+        try:
+            agent = AgentService(settings,mode=settings.planner)
+            result = agent.query(question)
+            return jsonify(result),200
+        except (ValueError,KeyError,TypeError):
+            return jsonify({"error":"invalid_query_plan"}),400
+        except RuntimeError:
+            return jsonify({"error":"planner_or_tool_unavailable"}),503
+        finally:
+            if agent is not None:
+                agent.close()
+
     return app
 
 
