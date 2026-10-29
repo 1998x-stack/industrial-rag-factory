@@ -100,3 +100,12 @@ Stages are **sequential acceptance gates**, not claims that future components al
 - S10-T05 online real dataset smoke and JSON report artifacts.
 - S10-T06 future real multilingual embedding and reranker benchmarks,
   expert industrial evidence judgments and group bootstrap extensions.
+
+### S11 [real pretrained CPU model lane + source-rank and abstention comparisons]
+- S11-T01 fixed allowlisted, full-revision multilingual encoder and reranker.
+- S11-T02 same-source sparse/dense/hybrid/reranked CPU benchmark.
+- S11-T03 grouped paired MRR delta, per-lane DEV-frozen abstention calibration.
+- S11-T04 observed query P50/P95, index/embedding preparation times.
+- S11-T05 offline mock regression and separately running real-model GitHub CI.
+- S11-T06 future independently labeled hard-negative industrial corpus, actual
+  device performance, learned confidence calibration and enterprise data security.

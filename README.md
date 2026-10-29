@@ -418,3 +418,37 @@ and indexes the same public corpus with actual pretrained 384-D vectors.
 Its full model SHA is recorded in the report. Default S10 CI does not
 download or benchmark this model, so **do not claim measured multilingual
 quality improvements** until an explicit run has been completed.
+
+## Stage 11 — Real pretrained multilingual Retrieval + Reranking comparison
+
+Stage 11 adds a *bounded, actual pretrained* comparison of four retrieval
+lanes on the exact same TechQA public source snapshot and split manifest:
+`sparse`, `dense` (384-d multilingual MiniLM), `hybrid` (RRF), and
+`hybrid_reranked` (English MS MARCO CrossEncoder).
+
+The encoder and CrossEncoder are downloaded only by explicitly opting in,
+using fixed allowlisted model repos, resolved immutable HF commit revisions,
+Apache-2.0 dataset-card license checks and local CPU execution. No DeepSeek
+API, plant control, or personal industrial data is involved.
+
+```bash
+pip install -e '.[huggingface,dense,dev]'
+python scripts/stage11_benchmark.py --fetch --per-class 3 \
+  --extra-corpus 8 --pretrained --k 3
+python -m pytest -q
+```
+
+The report contains TEST source-level MRR@K/Hit@K, answerable/abstention
+confusion metrics from a per-lane DEV-frozen threshold, per-lane p50/p95
+observed CPU query latency and paired grouped Bootstrap differences vs
+sparse. Model load and download are excluded from query latency and must
+not be interpreted as end-to-end request SLOs. A separate Actions workflow
+runs genuine weights, not mocked model output. Lightweight CI remains
+offline with fake/test encoders.
+
+**Caveats:** TechQA is IT support text, not OT telemetry. The MS MARCO
+reranker is trained on English. The benchmark truncates each source to
+3500 characters, uses limited public documents and weak author-supplied
+qrels. These experiments do not prove plant correctness, reliability,
+security, model superiority or statistically meaningful production lifts.
+See `docs/STAGE_11.md`.
