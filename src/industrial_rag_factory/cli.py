@@ -69,7 +69,17 @@ def main() -> None:
     roll.add_argument("--expected-active",required=True)
     oq=sub.add_parser("ops-query")
     oq.add_argument("question")
-    osub=sub.add_parser("ops-status")
+    exporter=sub.add_parser("ops-export")
+    exporter.add_argument("version")
+    exporter.add_argument("destination")
+    importer=sub.add_parser("ops-import")
+    importer.add_argument("archive")
+    recover=sub.add_parser("ops-recover")
+    recover.add_argument("version")
+    recover.add_argument("--expected-active",default=None)
+    prune=sub.add_parser("ops-prune")
+    prune.add_argument("--keep",type=int,default=3)
+    sub.add_parser("ops-status")
     sub.add_parser("ops-history")
     sub.add_parser("ops-readiness")
     args = parser.parse_args()
@@ -90,6 +100,14 @@ def main() -> None:
             payload=manager.rollback(args.version,expected_active=args.expected_active)
         elif args.command=="ops-query":
             payload=manager.query(args.question)
+        elif args.command=="ops-export":
+            payload=manager.export_bundle(args.version,args.destination)
+        elif args.command=="ops-import":
+            payload=manager.import_bundle(args.archive)
+        elif args.command=="ops-recover":
+            payload=manager.recover(args.version,expected_active=args.expected_active)
+        elif args.command=="ops-prune":
+            payload=manager.prune(keep=args.keep)
         elif args.command=="ops-status":
             payload=manager.status()
         elif args.command=="ops-history":

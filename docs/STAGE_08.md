@@ -150,3 +150,31 @@ security/OT sign-off before production authorization.
   https://opentelemetry.io/docs/languages/python/instrumentation/
 - SQLite online backup API:
   https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.backup
+
+## Offline signed backup and recovery extension
+
+`ReleaseManager.export_bundle(version, destination)` writes a two-entry ZIP
+archive containing an exact SQLite snapshot and locally HMAC-signed release
+manifest. `import_bundle(archive)` validates the version name, HMAC, SHA-256,
+SQLite quick-check and exact archive entry names, then registers the restored
+release **inactive**. `recover(version, expected_active=...)` requires an
+explicit compare-and-swap activation, so import alone cannot change the
+currently running index. The local signing key must remain available across
+restoration; this is **not** an external secret-management service or
+independent-site backup.
+
+`prune(keep=3)` deletes older inactive snapshots only while preserving the
+current release, its parent (rollback target) and newest retained versions.
+This is a *local retention simulation*, not a fully tested multi-host garbage
+collector. Archived signed bundles remain operator-managed.
+
+CLI additions:
+```bash
+irf ops-export <version> <archive.zip>
+irf ops-import <archive.zip>
+irf ops-recover <version>   # explicit first activation on empty catalogue
+irf ops-prune --keep 3
+```
+
+The CI drill now includes a recovery round-trip into a second, independent
+local catalogue. It does not claim resilience against regional site failure.

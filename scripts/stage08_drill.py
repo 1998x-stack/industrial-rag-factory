@@ -64,6 +64,17 @@ with tempfile.TemporaryDirectory(prefix="irf-stage08-drill-") as folder:
     mgr.rollback(initial["version"],expected_active=staged["version"])
     verify("rollback_restores_prior_index",mgr.query("Stage08DrillNewMarker892")[
         "status"]=="insufficient_evidence")
+    archive=Path(folder)/"verified-snapshot.zip"
+    exported=mgr.export_bundle(initial["version"],archive)
+    verify("backup_archive_created",archive.is_file() and bool(exported["archive_sha256"]))
+    restored=ReleaseManager(Path(folder)/"restored-catalog",work,
+                            "stage08-ci-ephemeral-never-production-signing-key-000")
+    imported=restored.import_bundle(archive)
+    verify("backup_restored_but_inactive",imported["status"]=="imported_inactive"
+           and restored.status()["active"] is None)
+    recovered=restored.recover(initial["version"],expected_active=None)
+    verify("restored_index_queryable",recovered["status"]=="recovered"
+           and restored.query("bearing maintenance")["status"]=="retrieved_not_verified")
     status=mgr.status()
     gate=readiness_report(status,target="production")
     verify("readiness_no_production_approval",gate["local_demo_ready"] and

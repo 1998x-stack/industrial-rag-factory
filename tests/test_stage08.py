@@ -188,3 +188,69 @@ def test_production_environment_rejected(release):
     with pytest.raises(ReleaseError,match="development-only"):
         ReleaseManager(manager.root,ws,KEY,
                        settings=replace(Settings(),environment="production"))
+
+
+def test_export_restore_bundle_roundtrip_and_explicit_recovery(release,tmp_path):
+    manager,ws,manifest=release
+    staged=manager.stage(manifest)
+    manager.publish(staged["version"],expected_active=None)
+    backup=tmp_path/"archive"/"snapshot.zip"
+    exported=manager.export_bundle(staged["version"],backup)
+    assert exported["status"]=="exported"
+    restored=ReleaseManager(tmp_path/"recovery-state",ws,KEY)
+    imported=restored.import_bundle(backup)
+    assert imported["status"]=="imported_inactive"
+    assert restored.status()["active"] is None
+    recovered=restored.recover(staged["version"],expected_active=None)
+    assert recovered["status"]=="recovered"
+    assert restored.query("bearing maintenance")["status"]=="retrieved_not_verified"
+    assert restored.status()["active_verified"]
+    assert restored.import_bundle(backup)["status"]=="already_imported"
+
+
+def test_backup_rejected_when_content_is_tampered(release,tmp_path):
+    import zipfile
+    manager,ws,manifest=release
+    staged=manager.stage(manifest)
+    backup=tmp_path/"backup.zip"
+    manager.export_bundle(staged["version"],backup)
+    broken=tmp_path/"tampered.zip"
+    with zipfile.ZipFile(backup) as src, zipfile.ZipFile(broken,"w") as dest:
+        dest.writestr("manifest.json",src.read("manifest.json"))
+        dest.writestr("snapshot.sqlite3",src.read("snapshot.sqlite3")+b"tampered")
+    restored=ReleaseManager(tmp_path/"recover",ws,KEY)
+    with pytest.raises(ReleaseError,match="digest"):
+        restored.import_bundle(broken)
+    assert restored.status()["release_count"]==0
+
+
+def test_backup_signature_wrong_key_rejected(release,tmp_path):
+    manager,ws,manifest=release
+    record=manager.stage(manifest)
+    backup=tmp_path/"backup.zip"
+    manager.export_bundle(record["version"],backup)
+    different=ReleaseManager(tmp_path/"new-state",ws,
+                             "different-signing-key-that-is-more-than-32-characters")
+    with pytest.raises(ReleaseError,match="signature"):
+        different.import_bundle(backup)
+
+
+def test_prune_keeps_active_and_rollback_parent(release):
+    manager,ws,manifest=release
+    versions=[]
+    for step in range(5):
+        if step:
+            (ws/"datasets/stage01/maintenance.md").write_text(
+                f"# Synthetic maintenance\\n\\nRevisionBatchNo{step}",
+                encoding="utf-8")
+        current=manager.status()["active"]
+        entry=manager.stage(manifest)
+        manager.publish(entry["version"],expected_active=current)
+        versions.append(entry["version"])
+    output=manager.prune(keep=2)
+    assert output["removed_versions"]
+    assert manager.status()["active"]==versions[-1]
+    assert manager.status()["active_verified"]
+    assert versions[-2] in {x["version"] for x in manager.history()}
+    manager.rollback(versions[-2],expected_active=versions[-1])
+    assert manager.status()["active"]==versions[-2]

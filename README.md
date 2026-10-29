@@ -322,7 +322,7 @@ stale-CAS rejection and rollback. It emits a JSON readiness report to
 To manually experiment with the local CLI, set `IRF_OPS_HMAC_KEY` (32-byte
 random secret) and optionally `IRF_OPS_ROOT=data/stage08`; use `irf
 ops-stage`, `ops-status`, `ops-publish`, `ops-query`, `ops-history`,
-`ops-rollback` and `ops-readiness`. **Never deploy the sample to a
+`ops-rollback` and `ops-readiness`, plus `ops-export`, `ops-import`, `ops-recover`\nand `ops-prune`. **Never deploy the sample to a
 production endpoint.** There is no authenticated remote release API.
 
 OpenTelemetry API spans are optional (`pip install -e '.[observability]'`);
