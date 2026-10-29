@@ -95,3 +95,25 @@ claim-level support checks; this stage does not assert factual verification.
   operation from Stage 03 threshold observations.
 - Keep Stage 05 evaluation offline, fixture-hashed, and separate from paid LLM
   quality measurement. Stage 06 is required for genuine enterprise IAM.
+
+## Stage 06 security contract
+
+- IRF_SECURITY_MODE=demo MUST reject all legacy /v1/* routes. Never add a
+  new development route without checking for secure-mode bypass.
+- Tokens are cryptographically signed developer capabilities, NOT real
+  authenticated identity. Do not build an HTTP token-mint endpoint.
+- Load policy from an administrator-controlled file on EVERY request; recheck
+  subject rights before/after tool execution and prior to response.
+- Enforce source-prefix access before serialization. Do not post-filter
+  denied evidence and still mark the answer supported.
+- Freeze the read-only tool list independently of the broader planner list:
+  new tools are denied until individually reviewed.
+- Treat document contents, model output and all client parameters as
+  untrusted data. Secure mode must use the deterministic RulePlanner.
+- Audit only pseudonymous subject digests, action categories, outcome and
+  request IDs; no API keys, prompts, source URIs or raw evidence.
+- Application protocol allowlists are NOT an industrial firewall. No OT
+  driver, network connector, command channel or actuator call may be added.
+- The sample policy and local HMAC audit are teaching fixtures. Production
+  IAM, hardware secret management, immutable audit and read-only OT network
+  enforcement need external infrastructure and security sign-off.

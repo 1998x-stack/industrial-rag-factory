@@ -18,8 +18,14 @@
         "batch.assess"
       ],
       "source_prefixes": [
-        "fixture://",
-        "file://"
+        "fixture://mes/",
+        "fixture://hist/",
+        "fixture://relations/",
+        "fixture://specs/",
+        "fixture://identity/",
+        "fixture://pump_manual.md",
+        "fixture://cut_spec.md",
+        "fixture://maintenance.md"
       ],
       "redact_fields": [
         "note"

@@ -118,3 +118,29 @@ supporting/refuting edges. This is **not** a complete natural-language
 entailment model; it deliberately supports only a small set of typed synthetic
 batch predicates. It does not verify cryptographic source authenticity or
 independently acquire source permissions; Stage 06 addresses production IAM.
+
+## Stage 06: developer-only security façade
+
+S01–S05 code remains the same in default offline mode. When
+IRF_SECURITY_MODE=demo, Flask blocks every legacy /v1/* route to prevent
+unauthenticated bypass. The two /v1/secure/* endpoints require short-lived
+HMAC-signed developer capability tokens.
+
+The trusted gateway validates token audience, signature and expiration,
+then reloads current subject policy and scopes tenant/groups and tool rights
+from that policy, NEVER from token or query parameters. GuardedRegistry
+enforces permissions both before and after each read-only operation and
+requires all nested source_uri fields to match explicit allowed prefixes.
+Current policy is checked again before response serialization; selected
+fields are redacted after source validation.
+
+An HMAC-chained JSONL local audit records only a pseudonym, event type,
+decision, timestamp, request ID and previous MAC. File integrity checks
+can detect some modifications but do NOT establish immutable or independently
+signed audit logging. There are no Stage 06 production services or OT
+network connectors. The forbidden-protocol guard is defense in depth only;
+real industrial protection requires external firewall/conduit rules.
+
+Flow: signed local capability -> PolicyStore (reload) -> guarded S04 tools
+-> S05 claim verification -> source-policy recheck -> redaction -> audit
+-> response. Legacy /v1 routes disabled only when secure demo mode enabled.
