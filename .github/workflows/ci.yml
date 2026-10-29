@@ -154,3 +154,32 @@ jobs:
           name: stage10-techqa-abstention
           path: outputs/stage10_techqa.json
           if-no-files-found: error
+
+  stage12-real-scale:
+    name: Stage 12 larger public TechQA + closed-loop FTS load
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DOWNLOAD_TIMEOUT: "60"
+      HF_HUB_ETAG_TIMEOUT: "30"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e '.[huggingface]'
+      - name: Real public corpus and concurrent SQLite benchmark
+        run: |
+          python scripts/stage12_scale.py --fetch \
+            --revision 0b5bbc84b7f07d6d09d063130e90b716d8d4a32a \
+            --per-class 10 --extra-corpus 96 \
+            --concurrency 1 2 4 --requests-per-worker 16
+      - name: Publish Stage 12 source-hashed performance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage12-real-scale
+          path: outputs/stage12_scale.json
+          if-no-files-found: error

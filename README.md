@@ -452,3 +452,33 @@ reranker is trained on English. The benchmark truncates each source to
 qrels. These experiments do not prove plant correctness, reliability,
 security, model superiority or statistically meaningful production lifts.
 See `docs/STAGE_11.md`.
+
+## Stage 12 — Robustness, larger corpus and read-only SQLite load testing
+
+Stage 12 adds a reproducible **closed-loop load test** on public
+NVIDIA TechQA, using a larger fixed train/dev/test snapshot and an
+independent read-only SQLite connection per concurrent worker.
+It compares baseline with synthetic lexical distractors created solely
+from TRAIN questions and reports TEST-only source retrieval MRR, p50/p95/p99
+latency, completed QPS, indexing time, database size and process peak RSS.
+
+```bash
+pip install -e '.[huggingface,dev]'
+python scripts/stage12_scale.py --fetch \
+  --revision 0b5bbc84b7f07d6d09d063130e90b716d8d4a32a \
+  --per-class 10 --extra-corpus 96 --concurrency 1 2 4
+```
+
+A separate real pretrained CPU experiment tests actual reranker
+candidate counts 4/8/12, rather than extrapolating reranking latency:
+```bash
+pip install -e '.[pretrained-benchmark]'
+python scripts/stage12_rerank_depth.py --fetch --depths 4 8 12
+```
+
+CI archives source-hashed `outputs/stage12_scale.json` and
+`outputs/stage12_rerank_depth.json`. Neither script interacts with plant
+OT, and both operate only on public TechQA. Do not interpret closed-loop
+local client QPS or tiny-sample P99 as production SLOs, or TRAIN-derived
+synthetic lexical distractors as independently annotated relevance negatives.
+See `docs/STAGE_12.md`.

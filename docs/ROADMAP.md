@@ -109,3 +109,13 @@ Stages are **sequential acceptance gates**, not claims that future components al
 - S11-T05 offline mock regression and separately running real-model GitHub CI.
 - S11-T06 future independently labeled hard-negative industrial corpus, actual
   device performance, learned confidence calibration and enterprise data security.
+
+### S12 [public larger-sample robustness, bounded local concurrency and rerank-depth]
+- S12-T01 open read-only SQLite connection per concurrent worker.
+- S12-T02 train-only synthetic lexical distractors; independent test comparisons.
+- S12-T03 source MRR + grouped paired CI, p50/p95/p99, closed-loop QPS.
+- S12-T04 resource/time budgets, tenant/group-negative security probes.
+- S12-T05 actual CPU pretrained CrossEncoder candidate-depth 4/8/12 ablation.
+- S12-T06 reproducible live HF CI and separate model artifact.
+- S12-T07 future open-loop load generator, larger multilingual cross-domain
+  labels, host-level memory/energy isolation and sustained soak tests.
