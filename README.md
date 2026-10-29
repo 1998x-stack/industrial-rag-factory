@@ -332,3 +332,48 @@ Changed-source byte/4 budget is a proxy, **not** a model token count.
 Production readiness always remains explicitly **blocked** because IAM,
 external immutable audit, network-enforced OT boundaries and live release
 approval are missing. See `docs/STAGE_08.md`.
+
+## Stage 09 — Hugging Face real public industrial QA benchmark
+
+Stage 09 adds an explicit, **opt-in public real-data benchmark**:
+`alibaba-multimodal-industrial-ai/IndustryBench`, whose dataset card declares
+MIT licensing. It contains industrial questions, multilingual parallel
+answers and a `knowledge_text` reference field. The ingestion code pins the
+full Hugging Face repository commit and records the raw CSV SHA-256, checks
+the declared license and required fields, skips missing references, groups
+near-identical contexts, and creates group-separated train/dev/test labels.
+
+```bash
+pip install -e '.[api,llm,pdf,docx,ontology,dev,huggingface]'
+python scripts/stage09_hf_benchmark.py --fetch --limit-per-split 12 --k 5 \
+  --modes sparse hybrid
+```
+
+This reads a public dataset (the CSV download is approximately 16 MB) and
+writes a **local** normalized snapshot at `data/hf/industrybench.json` plus
+`outputs/stage09_hf_report.json`. CI uses 8 cases per split to bound runtime.
+The raw source CSV and normalized text are **not committed**. The report
+includes the dataset revision, source SHA, per-case citation candidates,
+document-level Recall/MRR/nDCG, grouping-based confidence intervals and
+latency; it does **not** transmit raw documents or user data to DeepSeek.
+
+**Evaluation validity:** the dataset authors supply the reference
+`knowledge_text` alongside each answer. Treat it as *weakly annotated public
+retrieval evidence*, not an independent authority or real sensor reading.
+Source documents for all evaluation groups are indexed (standard retrieval
+setting), while query/gold labels are split. The report never marks Stage 05
+claims `supported` because approved plant identities/specifications/MES
+records are unavailable. Literal answer substring coverage is a diagnostic,
+not an entailment score. The small deterministic subset does not represent
+the full 2,049-row benchmark, production failure diagnosis or real deployment.
+
+The secondary datasets `ibm-research/AssetOpsBench` (Apache-2.0)
+and `nvidia/TechQA-RAG-Eval` (Apache-2.0) are catalogued for future
+adapter integration but **are not claimed to have been benchmarked**.
+See `docs/STAGE_09.md` and `config/stage09_datasets.json`.
+
+For opt-in end-to-end public-data generation testing, configure a DeepSeek
+API key and append `--generate --generation-cases 3` to the benchmark
+command. This exercises the existing generator and citation-ID checks on
+at most five real benchmark queries; no default CI invokes the API, and
+the result does **not** certify answer correctness.

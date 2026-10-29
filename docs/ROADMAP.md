@@ -81,3 +81,13 @@ Stages are **sequential acceptance gates**, not claims that future components al
 - S08-T03 OpenTelemetry tracing and operational SLOs.
 - S08-T04 cost and latency controls, redaction and retention.
 - S08-T05 disaster recovery drill, QA acceptance and release report.
+
+### S09 [public HF IndustryBench benchmark, real download required for live gate]
+- S09-T01 verify dataset license, schema, authoritative HF revision and raw hash.
+- S09-T02 normalize public industrial text sources and labels in isolated tenant.
+- S09-T03 group/split queries, dedupe evidence, index via actual S01 pipeline.
+- S09-T04 evaluate sparse/hybrid document ranking, citations, abstention and latency.
+- S09-T05 publish reproducible real-data report; explicitly separate industrial
+  knowledge QA from actual production MES/OT evidence.
+- S09-T06 future: expert-labeled independent industrial documents and
+  AssetOpsBench/TechQA dataset-specific adapters.

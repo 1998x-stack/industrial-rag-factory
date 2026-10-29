@@ -189,3 +189,21 @@ An optional OpenTelemetry API span measures operation categories without
 secrets/content; local query samples provide a small p95 smoke metric.
 There is no configured exporter, production authorization or live OT
 integration. The independent readiness gate remains production_blocked.
+
+## Stage 09 public Hugging Face benchmark path
+
+Explicit HF Hub download with pinned full dataset commit and checked license
+-> local raw CSV SHA -> required-field/schema/duplicate checks -> near-document
+cluster grouping -> train/dev/test question label manifest -> isolated
+`hf-public`/`hf-benchmark` tenant -> existing Stage 01 from_bytes parser,
+chunking, SQLite FTS5 + lexical hashing index -> document-level source-aware
+retrieval and citation IDs -> candidate evidence and abstention status ->
+case-level recall, MRR, nDCG and source-group bootstrap intervals ->
+`outputs/stage09_hf_report.json`.
+
+Gold `answer` is used only for a separate literal-substring diagnostic,
+never to construct indexed context or claim certainty. The public
+`knowledge_text` field is question-associated, so context retrieval may be
+biased toward easy matches; this benchmark is not a blind external corpus
+retrieval leaderboard. Stage 03 MES/OT and Stage 05 numerical claim verification
+do not become valid through HF text. Stage 06 network security remains separate.

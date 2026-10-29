@@ -153,3 +153,21 @@ claim-level support checks; this stage does not assert factual verification.
 - Fault injection, rollback, catalog integrity and Stage 06 authorization
   tests must pass before merging. Never turn a green research CI into
   production or OT deployment permission.
+
+## Stage 09 HF public dataset ingestion rules
+
+- Live HF Hub access is opt-in and must use an exact allowlisted repository,
+  file and dataset type, with the resolved 40-hex commit SHA recorded. Reject
+  arbitrary repo names/URLs, custom remote dataset loader code and license drift.
+- Check raw file sha, schema, duplicate queries and grouped train/dev/test
+  labels; no benchmark gold answer may enter the indexed source document text.
+- Public benchmark knowledge_text is source text only; a benchmark-supplied
+  reference is NOT an approved industrial operating specification or verified
+  physical measurement. Document retrieval must remain retrieved_not_verified.
+- Never reuse S05 batch numeric verifier for non-batch public QA; never fabricate
+  independent factual support or fault diagnosis from public questions.
+- Keep default CI offline and add a separate live network check; failed
+  external fetches may not be silently replaced by invented fixtures in
+  the real-data report. Store source bytes under ignored data/hf only.
+- Graph, SQL, historian and security stages remain unchanged without a
+  properly authorized, separately validated public source mapping.
