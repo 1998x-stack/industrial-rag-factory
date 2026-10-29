@@ -1,0 +1,94 @@
+{
+  "version": "stage07-v1",
+  "factors": [
+    {
+      "id": "parser",
+      "status": "not_experimentally_available",
+      "reason": "One production code path for each supported format; no independently tested alternative parser."
+    },
+    {
+      "id": "chunk_size",
+      "status": "measured",
+      "values": [
+        100,
+        220
+      ]
+    },
+    {
+      "id": "overlap",
+      "status": "measured",
+      "values": [
+        0,
+        40
+      ]
+    },
+    {
+      "id": "retrieval_mode",
+      "status": "measured",
+      "values": [
+        "sparse",
+        "dense",
+        "hybrid"
+      ]
+    },
+    {
+      "id": "ingestion_order_seed",
+      "status": "measured_determinism",
+      "values": [
+        11,
+        29,
+        47
+      ]
+    },
+    {
+      "id": "embedding_model",
+      "status": "held_constant",
+      "value": "hashing",
+      "reason": "Hashing vectors are lexical, not pretrained semantics."
+    },
+    {
+      "id": "reranker",
+      "status": "not_experimentally_available",
+      "reason": "No alternate learned reranker in repo; current lexical tie-break is constant."
+    },
+    {
+      "id": "graph",
+      "status": "negative_control_measured",
+      "values": [
+        "enabled",
+        "disabled_fail_closed"
+      ]
+    },
+    {
+      "id": "planner",
+      "status": "negative_control_measured",
+      "values": [
+        "rules",
+        "document_only"
+      ]
+    },
+    {
+      "id": "claim_verifier",
+      "status": "negative_control_measured",
+      "values": [
+        "enabled",
+        "disabled_fail_closed"
+      ]
+    },
+    {
+      "id": "security",
+      "status": "gated_tests",
+      "reason": "S06 security regression covers leakage/deny. Access-control disabling is not an acceptable benchmark mode."
+    },
+    {
+      "id": "prompt",
+      "status": "held_constant",
+      "reason": "No real model call in offline benchmark; prompt strings have no effect."
+    },
+    {
+      "id": "model",
+      "status": "not_experimentally_available",
+      "reason": "No real DeepSeek endpoint/key, so live model quality/cost is not measured."
+    }
+  ]
+}
