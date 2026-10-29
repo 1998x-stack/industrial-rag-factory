@@ -335,7 +335,7 @@ class ReleaseManager:
                     try:
                         retriever=Retriever(store,backend="hashing")
                         hits=retriever.search(question,tenant=tenant,groups=groups,
-                                              mode="hybrid",top_k=k)
+                                              mode="sparse",top_k=k)
                         success=True
                         return {"version":version,
                                 "status":"retrieved_not_verified" if hits
