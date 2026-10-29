@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import re
 from dataclasses import asdict, dataclass
-from typing import Any
 
 CLAIM_TYPES = {
     "batch_exceedance_count", "batch_valid_sample_count",
