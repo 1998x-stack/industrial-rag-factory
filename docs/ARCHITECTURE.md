@@ -169,3 +169,23 @@ source ACL and OT denial stay enforced and are tested in separate security CI.
 Outputs are `stage07_ablation.json` and an escaped, dependency-free HTML
 receipt. This is **synthetic offline integration evidence**, not production
 LLM or RAG quality, and the very small group count makes intervals illustrative.
+
+## Stage 08: offline immutable release catalog
+
+Stage 08 introduces `operations.ReleaseManager`, a separate, developer-only
+blue/green publication path for the synthetic document index. Changed-source
+hashing, full source-manifest reconciliation and staged SQLite copying make
+the new index independent of the active one. Metadata are locally HMAC signed
+and snapshot bytes SHA-256 checked; only a verified staged snapshot can be
+made active by a compare-and-swap SQLite catalog update. Rollback similarly
+requires a verified target and an expected-current version.
+
+A published snapshot is opened by pinned, query-only SQLite URI and never
+through the mutating Store constructor. A POSIX advisory lock guards the
+version pointer during query; concurrent writers cannot swap an index until
+a pinned reader completes. Source deletes physically purge staged content.
+
+An optional OpenTelemetry API span measures operation categories without
+secrets/content; local query samples provide a small p95 smoke metric.
+There is no configured exporter, production authorization or live OT
+integration. The independent readiness gate remains production_blocked.
