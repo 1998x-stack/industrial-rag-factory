@@ -1,0 +1,37 @@
+{
+  "dataset": "synthetic-mes-2026",
+  "executions": [
+    {
+      "record_id": "MES-104",
+      "execution_id": "EXEC-104",
+      "batch_id": "B-104",
+      "equipment_id": "CUT-03",
+      "work_order_id": "WO-104",
+      "specification_id": "SPEC-C",
+      "mode": "CUTTING",
+      "started": "2026-10-20T10:00:00+08:00",
+      "ended": "2026-10-20T10:40:00+08:00",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://mes/MES-104"
+    },
+    {
+      "record_id": "MES-105",
+      "execution_id": "EXEC-105",
+      "batch_id": "B-105",
+      "equipment_id": "CUT-04",
+      "work_order_id": "WO-105",
+      "specification_id": "SPEC-D",
+      "mode": "CUTTING",
+      "started": "2026-10-20T11:00:00+08:00",
+      "ended": "2026-10-20T11:30:00+08:00",
+      "tenant_id": "demo",
+      "access_groups": [
+        "demo-readers"
+      ],
+      "source_uri": "fixture://mes/MES-105"
+    }
+  ]
+}
