@@ -48,14 +48,15 @@ def tune(dev: list[dict]) -> dict:
                    if x["top_score"] is not None and
                    math.isfinite(float(x["top_score"]))})
     # Include always-abstain threshold, and every score value.
-    cutoffs=finite+[math.inf]
-    if not cutoffs:
-        cutoffs=[math.inf]
+    # A finite cutoff above all observed DEV scores is equivalent to
+    # always abstaining, but keeps the report strict RFC-8259 JSON.
+    high=finite[-1]+max(1.0,abs(finite[-1])*.01) if finite else 1e9
+    cutoffs=finite+[high]
     scored=[(metrics(dev,x),x) for x in cutoffs]
     best=sorted(scored,key=lambda item:(
         -item[0]["balanced_accuracy"],
         item[0]["false_answer_rate"],
-        -item[1] if math.isfinite(item[1]) else float("-inf")))[0]
+        -item[1]))[0]
     return {"threshold":best[1],"dev_metrics":best[0],
             "selection":"dev_balanced_accuracy_then_lower_false_answer_rate",
             "candidate_cutoffs":len(cutoffs)}

@@ -87,3 +87,12 @@ def test_semantic_model_requires_explicit_existing_snapshot(tmp_path):
     with pytest.raises(ValueError,match="unprepared"):
         evaluate_techqa(data,k=3,encoder="sentence-transformers",
                         model_path=str(tmp_path/"missing"),mode="dense")
+
+
+def test_no_match_calibration_is_strict_json_serializable():
+    dev=[{"id":"pos","impossible":False,"top_score":None},
+         {"id":"neg","impossible":True,"top_score":None}]
+    calibration=tune(dev)
+    assert calibration["threshold"]<float("inf")
+    json.dumps(calibration,allow_nan=False)
+    assert calibration["dev_metrics"]["coverage"]==0
