@@ -50,7 +50,7 @@ def test_closed_loop_independent_threads_and_robustness():
         for run in item["load"]:
             assert run["errors"]==0
             assert run["requests"]==run["concurrency"]*8
-            assert run["closed_loop_qps"]>0
+            assert run["completed_qps"]>0
             assert 0<=run["p50_ms"]<=run["p95_ms"]<=run["p99_ms"]
             assert run["access_boundary_checks_per_worker"]==2
     assert "not real" not in " ".join(result["limitations"])
