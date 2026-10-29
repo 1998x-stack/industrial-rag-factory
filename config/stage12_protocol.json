@@ -1,0 +1,15 @@
+{
+  "version": "stage12-v1",
+  "public_dataset": "nvidia/TechQA-RAG-Eval",
+  "dataset_revision": "0b5bbc84b7f07d6d09d063130e90b716d8d4a32a",
+  "per_class_per_split": 10,
+  "unjudged_extra_corpus": 96,
+  "concurrency_levels": [1, 2, 4],
+  "requests_per_worker": 16,
+  "warmups_per_worker": 2,
+  "retrieval": "sqlite_fts5_sparse_only",
+  "top_k": 3,
+  "stress": "train_question_conditioned_lexical_distractors",
+  "reporting": ["wall_time", "completed_closed_loop_qps", "p50", "p95", "p99", "answerable_mrr", "rss_peak"],
+  "production_approval": false
+}
