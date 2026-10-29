@@ -57,10 +57,9 @@ class SpecificationRegistry:
             # Require one specification valid for the entire process interval.
             if not valid_interval(row.get("valid_from"),row.get("valid_to"),interval.start):
                 continue
-            if row.get("valid_to") and not interval.end <= row["valid_to"]:
-                # ISO strings may have different offsets: compare datetimes instead.
+            if row.get("valid_to"):
                 from industrial_rag_factory.semantic.identity import instant
-                if instant(interval.end)>instant(row["valid_to"]):
+                if instant(interval.end) > instant(row["valid_to"]):
                     continue
             found.append(Specification(row["source_record_id"],specification_id,
                 equipment_id,mode,kind,str(row["upper_limit"]),row["unit"],

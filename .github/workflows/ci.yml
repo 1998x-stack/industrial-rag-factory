@@ -1,4 +1,4 @@
-name: Stage 01 CI
+name: Industrial RAG Factory CI
 on:
   push:
   pull_request:
@@ -33,3 +33,15 @@ jobs:
         run: |
           irf semantic-validate
           irf semantic-evaluate
+
+      - name: Stage 03 cross-source evaluation
+        run: |
+          irf multisource-assess B-104
+          irf multisource-evaluate
+          python scripts/stage03_evaluate.py
+      - name: Publish Stage 03 fixture evaluation
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage03-evaluation
+          path: outputs/stage03_evaluation.json

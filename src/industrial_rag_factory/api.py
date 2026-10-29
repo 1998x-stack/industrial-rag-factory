@@ -101,6 +101,34 @@ def create_app(settings: Settings | None = None, pipeline: Pipeline | None = Non
         except (KeyError,ValueError,TypeError) as exc:
             return jsonify({"error":str(exc)}),400
 
+    @app.post("/v1/multisource/assess")
+    def multisource_assess():
+        body = request.get_json(silent=True)
+        if not isinstance(body,dict) or any(
+            key in body for key in ("tenant_id","access_groups","groups","principal")
+        ):
+            return jsonify({"error":"Invalid JSON or server-controlled context"}),400
+        try:
+            batch_id = body["batch_id"]
+            kind = body.get("kind","vibration_velocity")
+            cadence = body.get("spacing_seconds",600)
+            if not isinstance(batch_id,str) or not 1 <= len(batch_id) <= 128:
+                raise ValueError("Invalid batch identifier")
+            if kind not in ("vibration_velocity","temperature"):
+                raise ValueError("Unsupported quantity kind")
+            if type(cadence) is not int or not 1 <= cadence <= 86400:
+                raise ValueError("Invalid sampling cadence")
+            from .multisource.service import MultiSourceService
+            multi = MultiSourceService.from_defaults()
+            try:
+                output = multi.assess_batch(batch_id,tenant_id=settings.tenant_id,
+                    groups=settings.groups,kind=kind,spacing_seconds=cadence)
+            finally:
+                multi.close()
+            return jsonify(output),200
+        except (ValueError,KeyError,TypeError) as exc:
+            return jsonify({"error":str(exc)}),400
+
     return app
 
 
