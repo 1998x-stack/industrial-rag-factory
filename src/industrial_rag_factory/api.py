@@ -180,6 +180,60 @@ def create_app(settings: Settings | None = None, pipeline: Pipeline | None = Non
             if grounding is not None:
                 grounding.close()
 
+    @app.before_request
+    def block_legacy_when_security_enabled():
+        if (settings.security_mode == "demo" and request.path.startswith("/v1/")
+            and not request.path.startswith("/v1/secure/")):
+            return jsonify({"error":"Legacy routes disabled in security demo mode"}),403
+
+    @app.post("/v1/secure/grounding/verify")
+    def secure_grounding():
+        if settings.security_mode != "demo":
+            return jsonify({"error":"Secure demo gateway not configured"}),503
+        body=request.get_json(silent=True)
+        if not isinstance(body,dict) or set(body)-{"batch_id","claims"} or "batch_id" not in body:
+            return jsonify({"error":"Invalid secure grounding request"}),400
+        from .grounding.contracts import Claim
+        from .security.gateway import SecureGateway
+        from .security.policy import AccessDenied
+        try:
+            raw=body.get("claims")
+            if raw is not None and (not isinstance(raw,list) or not 1<=len(raw)<=50):
+                raise ValueError("Invalid claims array")
+            claims=None if raw is None else [Claim.from_dict(x) for x in raw]
+            gateway=SecureGateway(settings)
+            output=gateway.verify_batch(request.headers.get("Authorization"),
+                                        body["batch_id"],claims)
+            return jsonify(output),200
+        except AccessDenied:
+            return jsonify({"error":"access_denied"}),403
+        except (ValueError,KeyError,TypeError):
+            return jsonify({"error":"invalid_secure_request"}),400
+        except (RuntimeError,OSError):
+            return jsonify({"error":"secure_gateway_unavailable"}),503
+
+    @app.post("/v1/secure/agent/query")
+    def secure_agent():
+        if settings.security_mode != "demo":
+            return jsonify({"error":"Secure demo gateway not configured"}),503
+        body=request.get_json(silent=True)
+        if (not isinstance(body,dict) or set(body)!={"question"} or
+            not isinstance(body.get("question"),str) or
+            not 1<=len(body["question"])<=2000):
+            return jsonify({"error":"Invalid secure agent request"}),400
+        from .security.gateway import SecureGateway
+        from .security.policy import AccessDenied
+        try:
+            output=SecureGateway(settings).query(
+                request.headers.get("Authorization"),body["question"])
+            return jsonify(output),200
+        except AccessDenied:
+            return jsonify({"error":"access_denied"}),403
+        except (ValueError,KeyError,TypeError):
+            return jsonify({"error":"invalid_secure_request"}),400
+        except (RuntimeError,OSError):
+            return jsonify({"error":"secure_gateway_unavailable"}),503
+
     return app
 
 

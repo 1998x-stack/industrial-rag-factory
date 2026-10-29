@@ -218,3 +218,53 @@ authorization context.** A rejected claim is reported as refuted, not rewritten
 as true; unsupported root-cause and product-conformity statements abstain.
 
 See docs/STAGE_05.md for the data contracts and known limitations.
+
+## Stage 06 — Security, Governance and read-only OT boundaries
+
+Stage 06 provides a **local-only security demonstration**, not production IAM:
+
+- Short-lived HMAC-signed capabilities with an explicit audience and a trusted
+  server-side policy file; a token never grants its own groups or tool rights.
+- Reload current principal policy for each request and each tool invocation.
+  Deactivating a principal or rotating its generation revokes capabilities.
+- Server-owned tenant/groups, an explicit immutable list of six read-only
+  tools, per-source URI prefix restrictions and output field redaction.
+- Fail-closed policy checks before AND after tool invocation and before
+  returning an API response.
+- HMAC chained, privacy-minimized, locally stored audit events with tamper
+  detection. This is not independent immutable audit storage.
+- When IRF_SECURITY_MODE=demo, ALL original unprotected /v1/* routes are
+  blocked; only the separate /v1/secure/* routes remain accessible.
+- No PLC/SCADA driver, command execution, actuator operation or OT network
+  connector is implemented or authorized. Protocol denial in source code
+  does not itself enforce a network segmentation perimeter.
+
+**IMPORTANT:** The default configuration has IRF_SECURITY_MODE=off, which is
+kept for backward compatibility with Stage 01–05 offline tests. Legacy
+development endpoints in that mode remain unauthenticated. Do not expose this
+development app or send real operational/credential data to it.
+
+To experiment in isolated local development:
+
+    export IRF_SECURITY_MODE=demo
+    export IRF_GATEWAY_SECRET="<random secret of at least 32 bytes>"
+    export IRF_SECURITY_POLICY=config/security_demo_policy.json
+    export IRF_AUDIT_PATH=outputs/security_audit.jsonl
+    irf serve
+
+Only trusted local test scripts may generate demo tokens using
+security.auth.mint_demo_token; the Flask API deliberately has **no token
+minting, user enrollment, authentication or policy editing endpoint**.
+POST /v1/secure/grounding/verify and /v1/secure/agent/query accept a
+Bearer token signed with the configured secret and strictly bounded
+JSON bodies. In demo secure-agent mode the planner is **always offline
+RulePlanner**, even if a paid DeepSeek planner is configured elsewhere.
+
+    python scripts/stage06_evaluate.py
+    pytest -q
+    ruff check src tests
+
+See docs/STAGE_06.md and docs/SECURITY_THREAT_MODEL.md. Production
+deployment remains prohibited until a real identity provider, external
+policy service, immutable audit sink, network-level OT separation and
+security review are implemented and tested.

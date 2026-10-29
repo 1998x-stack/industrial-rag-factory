@@ -71,3 +71,12 @@ jobs:
         with:
           name: stage05-evaluation
           path: outputs/stage05_evaluation.json
+
+      - name: Stage 06 security regression report
+        run: python scripts/stage06_evaluate.py
+      - name: Publish Stage 06 security report
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage06-security-evaluation
+          path: outputs/stage06_security_evaluation.json

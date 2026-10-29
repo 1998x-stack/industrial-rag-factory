@@ -18,6 +18,10 @@ class Settings:
     environment: str = "development"
     host: str = "127.0.0.1"
     port: int = 5000
+    security_mode: str = "off"
+    policy_path: str = "config/security_demo_policy.json"
+    audit_path: str = "outputs/security_audit.jsonl"
+    gateway_secret: str = ""
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -35,7 +39,18 @@ class Settings:
             environment=os.getenv("IRF_ENV", "development"),
             host=os.getenv("IRF_HOST", "127.0.0.1"),
             port=int(os.getenv("IRF_PORT", "5000")),
+            security_mode=os.getenv("IRF_SECURITY_MODE", "off"),
+            policy_path=os.getenv("IRF_SECURITY_POLICY", cls.policy_path),
+            audit_path=os.getenv("IRF_AUDIT_PATH", cls.audit_path),
+            gateway_secret=os.getenv("IRF_GATEWAY_SECRET", ""),
         )
+        if settings.security_mode not in ("off", "demo"):
+            raise ValueError("Invalid IRF_SECURITY_MODE")
+        if settings.security_mode == "demo" and (
+            settings.environment != "development" or
+            len(settings.gateway_secret.encode("utf-8")) < 32
+        ):
+            raise ValueError("Demo security mode requires development and a 32-byte secret")
         if settings.generator not in ("extractive", "deepseek"):
             raise ValueError("Invalid IRF_GENERATOR")
         if settings.planner not in ("rules", "deepseek"):

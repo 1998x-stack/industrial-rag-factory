@@ -61,7 +61,7 @@ Stages are **sequential acceptance gates**, not claims that future components al
 - S05-T04 contradiction handling, eligibility and abstention tests.
 - S05-T05 report supported claims separately from hypothesis.
 
-### S06
+### S06 [local demo policy + security regression delivered; production gate remains OPEN; see docs/STAGE_06.md]
 - S06-T01 authentication and authorization within the trusted gateway.
 - S06-T02 field/document-level ACL and policy refresh/revocation.
 - S06-T03 prompt-injection sandbox and tool-parameter validators.
