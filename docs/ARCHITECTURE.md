@@ -144,3 +144,28 @@ real industrial protection requires external firewall/conduit rules.
 Flow: signed local capability -> PolicyStore (reload) -> guarded S04 tools
 -> S05 claim verification -> source-policy recheck -> redaction -> audit
 -> response. Legacy /v1 routes disabled only when secure demo mode enabled.
+
+## Stage 07: offline factorial experiment and statistical qualification
+
+`config/stage07_experiments.json` fixes chunking, overlap, retrieval modes,
+index-order seeds and bootstrap resamples. An explicit factor registry in
+`config/stage07_factors.json` discloses held-constant/unavailable dimensions.
+`datasets/stage07/retrieval_cases.jsonl` contains 54 synthetic labeled
+questions in 27 independent asset groups with train/dev/test assignments.
+`experiments/contracts.py` detects exact group/source/query/content leakage.
+
+Actual `Pipeline` instances run in temporary isolated SQLite indexes.
+DEV labels choose the champion, and TEST metrics are measured without
+further parameter fitting. Case-level retrieval hit, recall, MRR and nDCG
+feed a **source-group** percentile bootstrap. Paired contrasts align the
+same case IDs and use shared bootstrap group draws. Seeds change ingest
+order, not LLM/model weights.
+
+The S02 graph, S04 planner and S05 claim verifier are each tested against
+safe negative controls (disabled components abstain rather than fabricate
+facts). S03 evaluates the existing MES golden records. S06 policy, audit,
+source ACL and OT denial stay enforced and are tested in separate security CI.
+
+Outputs are `stage07_ablation.json` and an escaped, dependency-free HTML
+receipt. This is **synthetic offline integration evidence**, not production
+LLM or RAG quality, and the very small group count makes intervals illustrative.

@@ -1,0 +1,23 @@
+{
+  "version": "stage07-v1",
+  "chunk_sizes": [
+    100,
+    220
+  ],
+  "overlaps": [
+    0,
+    40
+  ],
+  "modes": [
+    "sparse",
+    "dense",
+    "hybrid"
+  ],
+  "seeds": [
+    11,
+    29,
+    47
+  ],
+  "k": 3,
+  "bootstrap_resamples": 400
+}
