@@ -47,7 +47,7 @@ Stages are **sequential acceptance gates**, not claims that future components al
 - S03-T04 quantity kind/unit checks (QUDT) and specification applicability.
 - S03-T05 golden cross-system joins and conflict diagnostics.
 
-### S04
+### S04 [typed read-only planner baseline implemented; see docs/STAGE_04.md]
 - S04-T01 query intent and entity resolution prompts with typed outputs.
 - S04-T02 DAG schema: inputs, dependencies, timeout, budget, tool allowlist.
 - S04-T03 deterministic execution engine and evidence dependency tracking.

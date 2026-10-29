@@ -32,3 +32,14 @@ Prompts are versioned in `src/industrial_rag_factory/prompts.py`. All prompts ou
 ## DeepSeek configuration
 Use `DEEPSEEK_BASE_URL=https://api.deepseek.com`, `DEEPSEEK_MODEL=deepseek-flash`, `DEEPSEEK_API_KEY` from environment.
 JSON mode requires a JSON instruction and suitable output token budget; API may still return empty/truncated content and should be handled as an error.
+
+## Stage 04 PR-06: executable read-only planner prompt
+
+The Python prompt registry now includes SYSTEM_PLAN_V2 and
+PLANNER_PROMPT_VERSION=2026-10-stage04-v1. It instructs DeepSeek to return
+JSON with an intent, typed steps, declared dependencies, evidence needs,
+unknowns and the stage contract version. External validation remains
+mandatory: model messages do not grant arbitrary tools or permission.
+
+The CI suite tests DeepSeekPlanner through a mock OpenAI-compatible client;
+real API model quality, latency and cost are not measured in Stage 04.

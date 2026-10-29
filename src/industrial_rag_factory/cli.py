@@ -44,6 +44,13 @@ def main() -> None:
     multi.add_argument("--spacing-seconds",type=int,default=600)
     multi_eval = sub.add_parser("multisource-evaluate")
     multi_eval.add_argument("--gold",default="datasets/stage03/gold.jsonl")
+    agent_query = sub.add_parser("agent-query")
+    agent_query.add_argument("question")
+    agent_query.add_argument("--planner",choices=("rules","deepseek"),default=None)
+    agent_plan = sub.add_parser("agent-plan")
+    agent_plan.add_argument("question")
+    agent_plan.add_argument("--planner",choices=("rules","deepseek"),default=None)
+    sub.add_parser("agent-evaluate")
     args = parser.parse_args()
     settings = Settings.from_env()
     if args.command == "serve":
@@ -82,6 +89,27 @@ def main() -> None:
                     tenant_id=settings.tenant_id,groups=settings.groups)
         finally:
             service.close()
+        print(json.dumps(payload,ensure_ascii=False,indent=2))
+        return
+    if args.command.startswith("agent-"):
+        from .agent.service import AgentService
+        from .agent.evaluation import evaluate_planner
+        from .agent.planner import RulePlanner
+        from .agent.runner import DAGRunner
+        from .agent.tools import RunContext, build_tool_registry
+        if args.command == "agent-evaluate":
+            registry = build_tool_registry(settings)
+            try:
+                payload = evaluate_planner(RulePlanner(),DAGRunner(registry),
+                    "datasets/stage04/gold.jsonl",RunContext(settings.tenant_id,settings.groups))
+            finally:
+                registry.close()
+        else:
+            agent = AgentService(settings,mode=args.planner or settings.planner)
+            try:
+                payload = agent.plan(args.question) if args.command == "agent-plan" else agent.query(args.question)
+            finally:
+                agent.close()
         print(json.dumps(payload,ensure_ascii=False,indent=2))
         return
     pipeline = Pipeline(settings)

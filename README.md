@@ -156,3 +156,29 @@ See docs/STAGE_03.md for source contracts, failure modes, CI and limitations.
 The MES, historian and thresholds are **synthetic fixtures only**. Production
 connections, authenticated access, arbitrary user SQL/SPARQL, and OT actuation
 are deliberately unsupported.
+
+## Stage 04 - Typed Agent Query Planner
+
+Stage 04 introduces strict JSON query plans, an offline deterministic rule
+planner, an opt-in DeepSeek V4.1 Flash planner, six registered read-only tools,
+DAG execution with dependency validation, bounded soft timeouts, retry policies,
+and a structured redacted trace. Tool proposals never grant permissions.
+
+Run from the repository root:
+
+    irf agent-plan "B-104 的振动状态"
+    irf agent-query "B-104 的振动状态"
+    irf agent-query "ERP EQ-00037 有哪些测点"
+    irf agent-evaluate
+    python scripts/stage04_evaluate.py
+
+For an optional paid DeepSeek JSON planner, set DEEPSEEK_API_KEY and
+IRF_PLANNER=deepseek. Defaults to rules mode (offline, free).
+
+Flask exposes POST /v1/agent/query with only a question field. Runtime
+tenant/group and planner selection are server-owned. Flask is local development
+only, without production identity authentication.
+
+Soft thread timeouts return an error but cannot kill a running task; all
+Stage 04 tools are read-only. Execution success is NOT claim entailment
+or evidence authenticity. See docs/STAGE_04.md.
