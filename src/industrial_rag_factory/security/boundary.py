@@ -3,14 +3,15 @@ from __future__ import annotations
 
 from urllib.parse import urlparse
 
-from industrial_rag_factory.agent.contracts import TOOLS
-
 # A source URL is provenance only, NEVER an automatically fetched endpoint.
 FORBIDDEN_SCHEMES = {
     "opc.tcp","modbus","modbus.tcp","plc","s7","ethernetip","mqtt","amqp",
     "telnet","ftp","tftp","ssh"
 }
-SAFE_READ_TOOLS = frozenset(TOOLS)
+SAFE_READ_TOOLS = frozenset((
+    "document.search", "entity.resolve", "graph.traverse",
+    "mes.by_batch", "historian.read", "batch.assess",
+))
 
 
 def reject_operational_target(target: str) -> None:

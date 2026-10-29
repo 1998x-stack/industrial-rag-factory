@@ -110,6 +110,9 @@ class SecureGateway:
 
     def query(self, authorization: str | None, question: str) -> dict:
         def run(principal: Principal):
+            proposal=RulePlanner().plan(question)
+            if not {step.tool for step in proposal.steps} <= set(principal.allowed_tools):
+                raise AccessDenied("Query requires tools outside approved scope")
             scoped=replace(self.settings,tenant_id=principal.tenant_id,
                            groups=principal.groups,planner="rules",
                            generator="extractive")
