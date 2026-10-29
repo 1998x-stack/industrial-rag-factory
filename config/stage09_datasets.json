@@ -1,0 +1,47 @@
+{
+  "version": "stage09-v1",
+  "primary": {
+    "repo_id": "alibaba-multimodal-industrial-ai/IndustryBench",
+    "license_declared": "mit",
+    "file": "huggingface_dataset.csv",
+    "adapter": "industrybench",
+    "columns": [
+      "id",
+      "question",
+      "answer",
+      "knowledge_text",
+      "question_en",
+      "answer_en",
+      "industry_primary",
+      "capability",
+      "difficulty"
+    ],
+    "role": "primary real public industrial text evidence and QA; author-provided references, weak retrieval qrels",
+    "status": "implemented_opt_in_online",
+    "revision": "main_resolved_to_commit_in_run_artifact"
+  },
+  "secondary": [
+    {
+      "repo_id": "ibm-research/AssetOpsBench",
+      "license_declared": "apache-2.0",
+      "role": "industrial asset diagnosis and agent reasoning",
+      "status": "reviewed_not_yet_implemented",
+      "notes": "Scenario and FailureSensorIQ formats need separate verified answer mapping."
+    },
+    {
+      "repo_id": "nvidia/TechQA-RAG-Eval",
+      "license_declared": "apache-2.0",
+      "role": "technical support unanswerable queries",
+      "status": "reviewed_not_yet_implemented",
+      "notes": "Contexts are answer-associated; cannot claim unbiased corpus retrieval."
+    }
+  ],
+  "guarantees": [
+    "No untrusted model-code execution",
+    "Dataset revisions resolved to full commit SHA",
+    "Only public data, isolated benchmark tenant",
+    "Label-bearing gold answers never appended to corpus",
+    "No claim of independent physical-fact verification",
+    "Train/dev/test group and query label separation"
+  ]
+}
