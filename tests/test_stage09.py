@@ -125,3 +125,37 @@ def test_unjudged_distractor_sources_do_not_count_as_qrels():
                               chunk_size=120,overlap=20,resamples=100)
     assert report["unjudged_distractor_docs"]==30
     assert report["corpus_docs"]>report["queries"]
+
+
+def test_generation_pipeline_uses_citation_contract_without_provider_calls():
+    from industrial_rag_factory.hfbench.answering import evaluate_generation
+
+    class FakeGenerator:
+        _hf_mock=True
+
+        def generate(self,question,evidence):
+            assert question
+            assert evidence and evidence[0][0]=="E1"
+            return {"answer":"Reference retrieved, content not independently verified.",
+                    "citation_ids":["E1"],"abstain":False}
+
+    bench=load_industrybench_csv(rows_csv(150),revision=SHA,limit_per_split=8,
+                                 distractor_docs=10)
+    report=evaluate_generation(bench,generator=FakeGenerator(),
+                               max_test_cases=2,mode="sparse",k=3)
+    assert report["generator"]=="injected_mock"
+    assert report["max_test_cases"]==2
+    assert len(report["cases"])==2
+    assert all(x["status"] in ("generated_citations_checked",
+                               "insufficient_evidence") for x in report["cases"])
+    assert "entailment" in " ".join(report["limitations"])
+
+
+def test_generation_refuses_missing_api_key(monkeypatch):
+    from industrial_rag_factory.hfbench.answering import evaluate_generation
+
+    for name in ("DEEPSEEK_API_KEY","IRF_GENERATOR","IRF_PLANNER"):
+        monkeypatch.delenv(name,raising=False)
+    bench=load_industrybench_csv(rows_csv(150),revision=SHA,limit_per_split=8)
+    with pytest.raises(RuntimeError,match="DEEPSEEK_API_KEY"):
+        evaluate_generation(bench,max_test_cases=1)

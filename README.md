@@ -371,3 +371,9 @@ The secondary datasets `ibm-research/AssetOpsBench` (Apache-2.0)
 and `nvidia/TechQA-RAG-Eval` (Apache-2.0) are catalogued for future
 adapter integration but **are not claimed to have been benchmarked**.
 See `docs/STAGE_09.md` and `config/stage09_datasets.json`.
+
+For opt-in end-to-end public-data generation testing, configure a DeepSeek
+API key and append `--generate --generation-cases 3` to the benchmark
+command. This exercises the existing generator and citation-ID checks on
+at most five real benchmark queries; no default CI invokes the API, and
+the result does **not** certify answer correctness.

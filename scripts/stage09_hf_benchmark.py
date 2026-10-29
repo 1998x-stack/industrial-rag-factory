@@ -25,6 +25,9 @@ def main() -> None:
     parser.add_argument("--snapshot",default="data/hf/industrybench.json")
     parser.add_argument("--output",default="outputs/stage09_hf_report.json")
     parser.add_argument("--k",type=int,default=5)
+    parser.add_argument("--generate",action="store_true",
+                        help="explicit opt-in to paid DeepSeek generation")
+    parser.add_argument("--generation-cases",type=int,default=3)
     parser.add_argument("--modes",nargs="+",choices=("sparse","hybrid","dense"),
                         default=["sparse","hybrid"])
     args=parser.parse_args()
@@ -38,6 +41,10 @@ def main() -> None:
         parser.error("No local benchmark snapshot. Supply --fetch explicitly.")
     record=json.loads(snapshot.read_text(encoding="utf-8"))
     report=evaluate_benchmark(record,modes=tuple(args.modes),k=args.k)
+    if args.generate:
+        from industrial_rag_factory.hfbench.answering import evaluate_generation
+        report["generation_smoke"]=evaluate_generation(
+            record,max_test_cases=args.generation_cases,mode="sparse",k=min(args.k,5))
     dest=Path(args.output)
     dest.parent.mkdir(parents=True,exist_ok=True)
     dest.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")

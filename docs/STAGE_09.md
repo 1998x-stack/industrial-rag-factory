@@ -109,3 +109,25 @@ before calculating document-level MRR/Recall and emitting citation
 candidates. This fixes the mismatch between chunk-level S01 results and
 source-document benchmark labels. The live smoke is still a small
 convenience sample and cannot support general accuracy claims.
+
+## Optional end-to-end DeepSeek generation (explicitly paid)
+
+The new `hfbench.answering.evaluate_generation` helper takes the same
+normalized public snapshot, indexes source documents in an isolated local
+tenant and runs Stage 01 `Pipeline.query` with a DeepSeek generator.
+It is **off by default**, never invoked by CI, and bounded to 1–5 held-out
+test questions. Its report contains status, evidence-source count and
+latency only; it does not persist prompt content or generated answer bodies.
+
+```bash
+export DEEPSEEK_API_KEY="<your API key>"
+export DEEPSEEK_BASE_URL="https://api.deepseek.com"
+export DEEPSEEK_MODEL="deepseek-flash"
+python scripts/stage09_hf_benchmark.py --snapshot data/hf/industrybench.json \
+  --generate --generation-cases 3
+```
+
+Citation IDs must exist in the retrieved evidence; unsupported citation IDs
+cause validation failure. **A citation-integrity pass is not proof of
+entailment, a quality metric for a real factory, or safe equipment guidance.**
+The offline regression uses a fake generator and performs no paid requests.
